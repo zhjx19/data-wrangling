@@ -227,9 +227,12 @@ tibble(files = list.files("data/", full.names = TRUE)) |>
 ```r
 # accumulate(序列, 二元函数, .init = 启动值)
 # .x = 上次累计结果或启动值, .y = 序列当前值
+# ⚠ 带 .init 时返回长度 = 序列长度 + 1（首元素是启动值）；放进 mutate 须用 序列[-1]，见下注意
 
-df |> mutate(累计结果 = accumulate(序列, ~ .x * .y / 100, .init = 启动值))
+df |> mutate(累计结果 = accumulate(序列[-1], ~ .x * .y / 100, .init = 启动值))
 ```
+
+> **注意（长度对齐）**：带 `.init` 的 `accumulate` 返回长度 = 序列长度 + 1（首元素为启动值），直接放进 `mutate` 会行数错位。统一写法为 `accumulate(序列[-1], ..., .init = 首值)`——去掉序列首元素后输出长度恰好等于行数（首行即启动值）。范式 6 通用形式、下方案例与 6.9 范型一致采用此写法。
 
 **案例**（永续盘存法计算资本存量，K_t = K_{t-1}(1-δ) + I_t）：
 ```r
