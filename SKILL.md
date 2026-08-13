@@ -178,6 +178,15 @@ df |> filter(mean(is.na(x)) < 0.6, .by = g)
 
 **关键理解**：`all()` 把每组逻辑向量坍缩为一个逻辑值，实现**组级**筛选——条件对整组为真才保留；不带 `all()` 的 `filter(条件, .by = g)` 是**行级**筛选，每个逻辑值作用于其所在行。
 
+**多列行级筛选（`if_all` / `if_any`）**：跨多列构造行级条件用 `if_all()` / `if_any()`（dplyr ≥1.0.4，不是禁用的 scoped 变体）：
+
+```r
+df |> filter(if_all(c(x, y), ~ !is.na(.x)), .by = g)  # x、y 都非缺失才保留该行
+df |> filter(if_any(1:2, is.na), .by = g)             # 前两列任一缺失就删该行
+```
+
+`if_all()` 要求所选列**全部**满足条件；`if_any()` 任一列满足即可——两者是**行级**多列筛选，区别于上面 `all()` 的**组级**筛选。
+
 ### 范式 5：nest + map（法宝模式）—— 分组后每组操作产生不同行数
 
 **何时用**：分组后每组的操作不能简单地用 `.by` 完成（例如分组连接、分组建模、分组读文件）。
@@ -412,7 +421,9 @@ df |> left_join(lookup, join_by(closest(value >= threshold)))
 严格遵守现代 R 风格：
 
 - 赋值用 `=`；管道用 `|>`；匿名函数用 `\(x)`；分组用 `.by`
-- 禁用：`ifelse()`、`merge()`、`gather()/spread()`、`*_at/if/all()`、`%>%`
+- 禁用：`ifelse()`、`merge()`、`gather()/spread()`、`*_at()/_if()/_all()`（dplyr 旧版作用域变体，如 `summarise_all`、`mutate_if`）、`%>%`
+
+> 基础函数 `all()` 与 `if_all()` / `if_any()` 不受上述禁用影响——多列行级筛选就用 `filter(if_all()/if_any(), .by)`（见范式 4）。
 
 ## 10. 自检清单
 
