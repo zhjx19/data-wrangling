@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "prompt": "我有一张宽表 df，列是 id、month_1 到 month_12（每个月一列，值是该月销量），我想算每个月的平均销量，输出一张长表（month, mean_sales）。怎么写？",
+    "expected": "按五步法：①理解目标（长表 12 行）；②列名含信息 → 范式1 先宽变长（pivot_longer names_pattern 提取 month 数字）；③④用 summarise 算均值；⑤管道串联。给出可运行 tidyverse 代码（|>、.by、pivot_longer），遵守 R 铁律（=、|>、\\(x)）。"
+  },
+  {
+    "id": 2,
+    "prompt": "数据 df 是各地区每月的销售额，我要算每个地区的环比增长率（本月/上月-1），并且把任何一个月数据缺失的地区整组删掉，最后还要能看出每个地区有多少个完整月份。",
+    "expected": "范式3 分组修改（mutate 环比 + lag，.by=地区）+ 范式4 组级筛选（filter(all(!is.na(销售额)), .by=地区) 删缺失组）+ 分组汇总（summarise(n(), .by=地区)）。三件事分别用 mutate/filter/summarise 各做一件事，管道串联，遵守 .by 无副作用与 R 铁律。"
+  },
+  {
+    "id": 3,
+    "prompt": "我想用 for 循环一行一行地遍历数据，把每一行的固定资产投资按永续盘存法 K_t = K_{t-1}(1-0.05) + I_t 算资本存量，再去重看有哪些地区。怎么写循环？",
+    "expected": "破除外来思维：指出不需要 for 循环逐行遍历——用 accumulate（范式6 累计迭代）向量化实现；去重用 distinct()/count() 而非 set。给出 accumulate(.init=) 的正确代码，并解释为何数据框原生操作更简洁，遵守 R 铁律。"
+  }
+]
