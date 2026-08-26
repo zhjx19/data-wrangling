@@ -27,6 +27,7 @@ description: Use when 面对复杂的结构化表格数据处理问题，需要�
 - **适用**：任何结构化表格数据的分析、处理、转换、建模问题。
 - **不适用**：ggplot2 图形语法（不在本技能范围）、非表格数据、需特定领域深度知识的问题。
 - **与数据清洗的关系**：数据清洗专注"脏数据→干净数据"的审计与清洗流程；本技能是更高层的通用思维框架，"清洗"只是其中一步。
+- **与 ml-mlr3 的分工**：本技能的 nest+map 分组建模是轻量探索性建模；若要正式的预测建模流程（mlr3verse 重抽样、调优、基准比较），转用 `ml-mlr3` 技能。
 
 ### 1.1 环境要求
 
@@ -261,6 +262,8 @@ df |> nest(.by = c(from, year)) |>
 ```
 > 注意：`slide(..., .complete = TRUE)` 在窗口不完整时返回 NULL，需自行处理边界情形（如 `length(x) < 2` 返回 `NA`）；若希望始终返回向量，改用 `slide_dbl`。
 
+> **slide vs slide_dbl 口径**：`slide()` 每个窗口可返回**任意长度**（可多元素，如上面"减少/增加"两值），窗口不完整时按 `.complete` 返回部分窗口或 NULL；`slide_dbl()` 强制每个窗口返回**单个数值**（适合 `mutate` 标量新列，如滚动均值），不完整窗口 `.complete=TRUE` 时返回 `NA`。单值用 `slide_dbl`（见 6.10），多值用 `slide`。
+
 ### 范式 8：非等连接
 
 **何时用**：连接条件不是 `=`，而是 `>=`、`closest` 等。
@@ -276,6 +279,8 @@ df |>
   left_join(lookup, join_by(closest(有效开播日 >= 天数))) |> 
   mutate(奖励系数 = pmin(奖励系数.x, 奖励系数.y))
 ```
+
+> **非等连接三形态**（dplyr ≥1.1）：`join_by(值 >= 阈值)` 按不等式连接（可多行匹配，全部满足档都会连上）；`join_by(closest(值 >= 阈值))` 每个左行只取最接近的一档；`join_by(within(区间))` / `join_by(overlap(区间))` 处理区间包含 / 重叠。选型：只取最近一档 → `closest`；要列出全部满足档 → 直接用 `>=`；区间匹配 → `within` / `overlap`。
 
 ## 5. 决策树
 
@@ -311,6 +316,8 @@ df |>
 ```
 
 ## 6. 代码范型速查
+
+> 本节与 §4 范式详述对应：这里只给最短可复制写法，`§4` 有"何时用 / 思维轨迹 / 案例 / 注意"的完整逻辑。范式代码改动后，跑 `scripts/verify_examples.R` 一键回归（8 范式 + §12 综合案例，全 PASS 才收工）。
 
 ### 6.1 分组汇总
 ```r
@@ -440,6 +447,7 @@ df |> left_join(lookup, join_by(closest(value >= threshold)))
 - [ ] 多表连接前检查了连接关系？（1:1 / 1:N / N:1 / N:N）
 - [ ] 管道串联后结果符合预期形状？
 - [ ] 代码遵守 `=` / `|>` / `\(x)` / `.by` 规范？
+- [ ] 代码模板改动后运行 `scripts/verify_examples.R`，8 范式 + §12 综合案例全 PASS？
 
 ## 11. 思维总结
 
@@ -449,3 +457,37 @@ df |> left_join(lookup, join_by(closest(value >= threshold)))
 > 3. **需要特殊的迭代方式吗？**（累计 → accumulate；滑动 → slide）
 >
 > 剩下的就是：**每一步只做一件事，用管道串起来。**
+
+## 12. 综合案例（多范式串联）
+
+> 一个真实感的完整例子，把 范式1→3→4→6→2 串起来；完整可运行脚本见 `scripts/verify_examples.R`（8 范式 + 本案例一键回归，R 4.6.1 实跑通过）。
+
+**问题**：门店销售宽表（`门店/区域/月1..月6` 每月销量一列），要 (a) 算每家门店每月环比；(b) 删除任一月份缺失的整店；(c) 用累计法算 S1 的"累计基数"（基数_t = 基数_{t-1}×0.9 + 销量_t，基数_1 = 100）；(d) 对剩余门店按总销量排名。
+
+```r
+library(tidyverse); library(slider)
+set.seed(42); n = 5
+wide = tibble(
+  门店 = paste0("S", 1:n),
+  区域 = rep(c("华东", "华北"), length.out = n),
+  月1 = round(runif(n, 80, 120)), 月2 = round(runif(n, 80, 120)),
+  月3 = round(runif(n, 80, 120)), 月4 = round(runif(n, 80, 120)),
+  月5 = round(runif(n, 80, 120)), 月6 = round(runif(n, 80, 120))
+); wide$月3[3] = NA          # 制造缺失月（供组级筛选）
+
+long = wide |>
+  pivot_longer(-c(门店, 区域), names_pattern = "月(\\d)", names_to = "月份", values_to = "销量") |>
+  arrange(门店, 月份) |>
+  mutate(环比 = 销量 / lag(销量) - 1, .by = 门店)        # 范式3：分组环比
+
+clean = long |> filter(all(!is.na(销量)), .by = 门店)     # 范式4：删含缺失整组（S3 出局）
+
+acc = long |> filter(门店 == "S1") |>
+  mutate(累计基数 = accumulate(销量[-1], ~ .x * 0.9 + .y, .init = 100))  # 范式6
+
+clean |>
+  summarise(总销量 = sum(销量), 均环比 = mean(环比, na.rm = TRUE), .by = 门店) |>
+  mutate(排序 = min_rank(-总销量)) |> arrange(排序)        # 范式2：汇总排名
+```
+
+**结果**（R 4.6.1 实跑）：S3 因含缺失被整组删除（剩 S1/S2/S4/S5）；S1 累计基数首行 = 100（accumulate 长度对齐正确）；排名 S1>S2>S4>S5。完整输出以 `scripts/verify_examples.R` 运行结果为准。
