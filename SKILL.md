@@ -159,7 +159,7 @@ compatibility: claude-code, zcode, opencode, codex
 
 ## 6. 代码范型速查
 
-> 本节是最短可复制写法；每个范式的"何时用 / 思维轨迹 / 案例 / 注意"完整逻辑见 [references/paradigms.md](references/paradigms.md)。范式代码改动后，跑 `scripts/verify_examples.R`（9 例）与 `scripts/verify_prompts.R`（3 题）一键回归，全 PASS 才收工。
+> 本节是最短可复制写法；每个范式的"何时用 / 思维轨迹 / 案例 / 注意"完整逻辑见 [references/paradigms.md](references/paradigms.md)。范式代码改动后，跑 `scripts/verify_examples.R`（11 例）与 `scripts/verify_prompts.R`（3 题）一键回归，全 PASS 才收工。
 
 ### 6.1 分组汇总
 ```r
@@ -334,7 +334,7 @@ df |> complete(地区, 月份 = 1:12, fill = list(销量 = 0))
 - [ ] 多表连接前检查了连接关系？（1:1 / 1:N / N:1 / N:N）
 - [ ] 管道串联后结果符合预期形状？
 - [ ] 代码遵守 `=` / `|>` / `\(x)` / `.by` 规范？
-- [ ] 代码模板改动后运行 `scripts/verify_examples.R`（9 例）与 `scripts/verify_prompts.R`（3 题），全 PASS 才收工？
+- [ ] 代码模板改动后运行 `scripts/verify_examples.R`（11 例）与 `scripts/verify_prompts.R`（3 题），全 PASS 才收工？
 
 ## 11. 思维总结
 
@@ -347,4 +347,4 @@ df |> complete(地区, 月份 = 1:12, fill = list(销量 = 0))
 
 ## 12. 综合案例与范式详述
 
-8 范式的"何时用 / 思维轨迹 / 案例 / 注意"完整逻辑与多范式串联综合案例（范式1→3→4→6→2），见 [references/paradigms.md](references/paradigms.md)。可运行回归：`scripts/verify_examples.R`（9 例）与 `scripts/verify_prompts.R`（3 题 7 检查）。
+8 范式的"何时用 / 思维轨迹 / 案例 / 注意"完整逻辑与多范式串联综合案例（范式1→3→4→6→2），见 [references/paradigms.md](references/paradigms.md)。可运行回归：`scripts/verify_examples.R`（11 例）与 `scripts/verify_prompts.R`（3 题 7 检查）。
