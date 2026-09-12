@@ -118,6 +118,21 @@ results = c(
     out = df |> left_join(lookup, join_by(closest(active_hours >= hours)))
     stopifnot(nrow(out) == 3, all(out$coef == c(1, 2, 3)))
     out
+  }),
+
+  ## ---- Paradigm 4 extension: negated if_any NA-propagation trap ----
+  run_case("P4x negated if_any NA trap (coalesce guard)", {
+    df = tibble(
+      region = c("East", NA, "North", "North"),
+      item   = c("A", "B", "Total", "C")   # one summary row to strip
+    )
+    # naive negated filter: region-NA row yields NA -> silently dropped
+    naive = df |> filter(!if_any(where(is.character), \(x) str_detect(str_squish(x), "^Total$")))
+    # guarded: coalesce NA -> "" before matching
+    safe = df |> filter(!if_any(where(is.character),
+                                \(x) str_detect(str_squish(coalesce(x, "")), "^Total$")))
+    stopifnot(nrow(naive) == 2, nrow(safe) == 3)  # naive loses the region-NA row
+    safe
   })
 )
 

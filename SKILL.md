@@ -190,6 +190,10 @@ df |> filter(if_any(1:2, is.na), .by = g)             # 前两列任一缺失就
 
 `if_all()` 要求所选列**全部**满足条件；`if_any()` 任一列满足即可——两者是**行级**多列筛选，区别于上面 `all()` 的**组级**筛选。
 
+> **陷阱（取反的 `if_any` 静默丢行）**：`if_any` 的 NA 会传播——所选列存在 NA 且其余列不匹配时条件为 `NA`，`filter()` 把整行**当 FALSE 静默丢弃**。取反检测（如"剔除汇总行"）必须先 `coalesce(x, "")` 兜底：
+> `filter(!if_any(where(is.character), \(x) str_detect(str_squish(coalesce(x, "")), "^总计$")))`
+> （回归实证：`scripts/verify_examples.R` 第 9 例——不带 coalesce 时 region 为 NA 的正常数据行被误删。）
+
 ### 范式 5：nest + map（法宝模式）—— 分组后每组操作产生不同行数
 
 **何时用**：分组后每组的操作不能简单地用 `.by` 完成（例如分组连接、分组建模、分组读文件）。
@@ -407,6 +411,7 @@ df |> left_join(lookup, join_by(closest(value >= threshold)))
 | 用 Python 式列表/集合思维 | 数据框原生操作更简洁 | `distinct`/`count`/`filter` |
 | `across` 搭配 `if_any` 混淆 | `if_any` 是筛选行，`across` 是修改列 | 分清场景再选函数 |
 | 管道内混合 `\|>` 和 `%>%` | 不一致 | 统一 `\|>` |
+| 取反 `filter(!if_any(...))` | `if_any` 的 NA 传播：含 NA 行整行按 FALSE **静默丢弃** | 检测条件内先 `coalesce(x, "")` 兜底（见范式 4 陷阱） |
 
 ## 8. 常见问题与错误思维（破除外来习惯）
 
