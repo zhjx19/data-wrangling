@@ -133,6 +133,28 @@ results = c(
                                 \(x) str_detect(str_squish(coalesce(x, "")), "^Total$")))
     stopifnot(nrow(naive) == 2, nrow(safe) == 3)  # naive loses the region-NA row
     safe
+  }),
+
+  ## ---- Paradigm 6 extension: grouped accumulate (.by per-group recursion) --
+  run_case("P6x grouped accumulate (.by)", {
+    df = tibble(
+      region = c("A", "A", "A", "B", "B"),   # unbalanced group sizes
+      year   = c(1, 2, 3, 1, 2),
+      invest = c(20, 30, 25, 50, 40)
+    )
+    out = df |>
+      arrange(region, year) |>
+      mutate(K = accumulate(invest[-1], \(x, y) x * 0.95 + y,
+                            .init = first(invest)), .by = region)
+    # each region starts from ITS OWN first invest; no cross-region leakage
+    stopifnot(
+      out$K[out$region == "A"][1] == 20,
+      abs(out$K[out$region == "A"][2] - (20 * 0.95 + 30)) < 1e-9,
+      out$K[out$region == "B"][1] == 50,
+      abs(out$K[out$region == "B"][2] - (50 * 0.95 + 40)) < 1e-9,
+      nrow(out) == 5
+    )
+    out
   })
 )
 

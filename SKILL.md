@@ -112,7 +112,7 @@ compatibility: claude-code, zcode, opencode, codex
 | 3 | 分组修改 | 组内改列、行数不变（环比/排名/标准化；**`lag` 前先 `arrange`**） | `mutate(新列 = 计算式, .by = 分组列)` |
 | 4 | 分组筛选 | 选组内行 / 整组 | `filter(条件, .by = g)`；组级 `filter(all(条件), .by = g)`；多列行级 `if_all`/`if_any`（**取反 `if_any` 有 NA 静默丢行陷阱，见反模式表**） |
 | 5 | 嵌套批量 | 每组行数变化（分组连接/建模/读文件）；仅返回标量行用 `reframe(.by=)` | `nest(.by = g) \|> mutate(data = map(data, f)) \|> unnest(data)` |
-| 6 | 累计迭代 | 用上次算这次（永续盘存/递推） | `accumulate(序列[-1], ~ .x · .y, .init = 首值)` |
+| 6 | 累计迭代 | 用上次算这次（永续盘存/递推）；简单累计和用 `cumsum` | `accumulate(序列[-1], ~ .x · .y, .init = first(序列))`；分组递推加 `.by`（**先 `arrange`，同 lag 行序前提**） |
 | 7 | 滑窗迭代 | 窗口滚动 | 单值 `slide_dbl(x, mean, .before = 2, .complete = TRUE)`；多值 `slide()` |
 | 8 | 非等连接 | 条件是 `>=`/`closest`/区间 | `left_join(lookup, join_by(closest(值 >= 阈值)))` |
 
@@ -215,7 +215,11 @@ df |> reframe(qs = quantile(x, c(0.25, 0.75)), .by = group)
 
 ### 6.9 累计迭代
 ```r
-df |> mutate(cum = accumulate(x[-1], ~ .x + .y, .init = first(x)))
+# 简单累计和/累计积用 cumsum/cumprod；有递推系数或依赖前值才用 accumulate
+df |> mutate(cum = cumsum(x))
+df |> mutate(cum = accumulate(x[-1], ~ .x * 0.95 + .y, .init = first(x)))
+# 分组递推：加 .by（逐组求值，各组从自己的首值起算；先 arrange 保证组内时间升序）
+df |> mutate(K = accumulate(invest[-1], ~ .x * 0.95 + .y, .init = first(invest)), .by = region)
 ```
 
 ### 6.10 滑窗迭代
