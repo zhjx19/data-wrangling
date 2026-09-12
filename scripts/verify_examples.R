@@ -172,6 +172,26 @@ results = c(
     cg = g |> complete(region, month = 1:3, fill = list(sales = 0))       # 6.16
     stopifnot(nrow(cg) == 6, sum(cg$sales, na.rm = TRUE) == 40)
     cg
+  }),
+
+  ## ---- Paradigm 7 extension: grouped slide_dbl (.by per-group windows) -----
+  run_case("P12 grouped slide_dbl (.by)", {
+    df = tibble(
+      store = c("A", "A", "A", "B", "B", "B"),
+      day   = c(1, 2, 3, 1, 2, 3),
+      sales = c(10, 20, 30, 100, 200, 300)
+    )
+    out = df |>
+      arrange(store, day) |>
+      mutate(r3 = slide_dbl(sales, mean, .before = 2, .complete = TRUE), .by = store)
+    # per-group windows: A row3 = mean(10,20,30)=20; B row3 = mean(100,200,300)=200.
+    # If windows leaked across stores, B row3 would be mean(20,30,100)=50.
+    stopifnot(
+      is.na(out$r3[1]), is.na(out$r3[2]), out$r3[3] == 20,
+      is.na(out$r3[4]), is.na(out$r3[5]), out$r3[6] == 200,
+      nrow(out) == 6
+    )
+    out
   })
 )
 

@@ -167,6 +167,17 @@ df |>
 
 **何时用**：需要"窗口滚动计算"——滚动均值、相邻比较、滑动窗口内操作。
 
+> **注意（行序与空洞，同范式 3/6）**：slide 依赖行内顺序——先 `arrange(分组列, 时间列)`；序列有缺月/缺行先 `complete()` 补全网格（速查 6.16），否则窗口错位**静默算错**。
+
+> **注意（分组滑窗）**：分组滚动直接加 `.by`——`.by` 逐组求值使 slide_dbl 在**各组内部**开窗，互不串值（回归实证：`scripts/verify_examples.R` 第 12 例——B 组末行均值 200 而非跨店泄漏的 50）：
+>
+> ```r
+> df |>
+>   arrange(门店, 日期) |>
+>   mutate(滚动均值 = slide_dbl(销量, mean, .before = 2, .complete = TRUE), .by = 门店)
+> ```
+> 单值用 `slide_dbl`；每组返回多值（如"较上期增/减各几项"）用 `slide()`，嵌套形态见下案例。
+
 ```r
 library(slider)
 # slide(序列, 函数, .before = 1, .complete = TRUE)

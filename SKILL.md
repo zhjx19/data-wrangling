@@ -118,7 +118,7 @@ compatibility: claude-code, zcode, opencode, codex
 | 4 | 分组筛选 | 选组内行 / 整组 | `filter(条件, .by = g)`；组级 `filter(all(条件), .by = g)`；多列行级 `if_all`/`if_any`（**取反 `if_any` 有 NA 静默丢行陷阱，见反模式表**） |
 | 5 | 嵌套批量 | 每组行数变化（分组连接/建模/读文件）；仅返回标量行用 `reframe(.by=)` | `nest(.by = g) \|> mutate(data = map(data, f)) \|> unnest(data)` |
 | 6 | 累计迭代 | 用上次算这次（永续盘存/递推）；简单累计和用 `cumsum` | `accumulate(序列[-1], ~ .x · .y, .init = first(序列))`；分组递推加 `.by`（**先 `arrange`，同 lag 行序前提**） |
-| 7 | 滑窗迭代 | 窗口滚动 | 单值 `slide_dbl(x, mean, .before = 2, .complete = TRUE)`；多值 `slide()` |
+| 7 | 滑窗迭代 | 窗口滚动 | 单值 `slide_dbl(x, mean, .before = 2, .complete = TRUE)`（分组加 `.by`，**先 `arrange`**）；多值 `slide()` |
 | 8 | 非等连接 | 条件是 `>=`/`closest`/区间 | `left_join(lookup, join_by(closest(值 >= 阈值)))` |
 
 > 每个范式的"何时用 / 思维轨迹 / 案例 / 注意"完整逻辑与多范式串联综合案例，见 [references/paradigms.md](references/paradigms.md)。
@@ -232,6 +232,8 @@ df |> mutate(K = accumulate(invest[-1], ~ .x * 0.95 + .y, .init = first(invest))
 ```r
 library(slider)
 df |> mutate(rolling_mean = slide_dbl(x, mean, .before = 2, .complete = TRUE))
+# 分组滑窗：加 .by（逐组开窗互不串值；先 arrange 保证组内时间升序）
+df |> mutate(rolling_mean = slide_dbl(sales, mean, .before = 2, .complete = TRUE), .by = store)
 ```
 
 ### 6.11 非等连接
@@ -290,7 +292,7 @@ df |> complete(地区, 月份 = 1:12, fill = list(销量 = 0))
 | `across` 搭配 `if_any` 混淆 | `if_any` 是筛选行，`across` 是修改列 | 分清场景再选函数 |
 | 管道内混合 `\|>` 和 `%>%` | 不一致 | 统一 `\|>` |
 | 取反 `filter(!if_any(...))` | `if_any` 的 NA 传播：所选列含 NA 且其余列不匹配时，该行按 FALSE **静默丢弃** | 检测条件内先 `coalesce(x, "")` 兜底（详述见 references/paradigms.md 范式 4） |
-| 累计/滑窗不先排序 | `accumulate`/`lag` 依赖行内顺序，乱序**静默算错** | 先 `arrange(分组列, 时间列)`（范式 3/6 注意栏） |
+| 累计/滑窗不先排序、不分组 | `accumulate`/`lag`/`slide_dbl` 依赖行内顺序，跨组/乱序**静默算错** | 先 `arrange(分组列, 时间列)`；分组递推/滑窗加 `.by`（范式 3/6/7 注意栏） |
 
 ## 8. 常见问题与错误思维（破除外来习惯）
 
