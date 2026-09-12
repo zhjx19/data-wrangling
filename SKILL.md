@@ -1,6 +1,14 @@
 ---
 name: tidy-data
-description: Use when 面对复杂的结构化表格数据处理问题，需要用 R tidyverse（dplyr/tidyr/purrr/slider）解决。适合需要五步法分解任务、重塑整洁数据（pivot_longer/pivot_wider）、管道（|>）、分组计算（.by）、跨列批量（across）、累计迭代（accumulate）、滑窗（slide）、嵌套批量（nest+map）、非等连接（join_by）等场景；也适用于把"Python 列表/循环式思维"改写为管道+数据框思维。不适用于 ggplot2 绘图或非表格数据。
+description: >-
+  Use when 面对复杂的结构化表格数据处理问题，需要用 R tidyverse（dplyr/tidyr/purrr/slider）解决。
+  适合需要五步法分解任务、重塑整洁数据（pivot_longer/pivot_wider）、管道（|>）、分组计算（.by）、
+  跨列批量（across）、累计迭代（accumulate）、滑窗（slide）、嵌套批量（nest+map）、非等连接（join_by）
+  等场景；也适用于把"Python 列表/循环式思维"改写为管道+数据框思维。不适用于 ggplot2 绘图或非表格数据。
+  Triggers: 数据思维/tidyverse 怎么写/宽表转长表/长表转宽表/分组计算/每组汇总/环比同比/累计迭代/滑窗滚动/非等连接/嵌套批量/不要用 for 循环.
+related-skills:
+  - data-cleaning
+compatibility: claude-code, zcode, opencode, codex
 ---
 
 # 数据思维：R tidyverse 问题解决框架
@@ -441,6 +449,8 @@ df |> left_join(lookup, join_by(closest(value >= threshold)))
 - 禁用：`ifelse()`、`merge()`、`gather()/spread()`、`*_at()/_if()/_all()`（dplyr 旧版作用域变体，如 `summarise_all`、`mutate_if`）、`%>%`
 
 > 基础函数 `all()` 与 `if_all()` / `if_any()` 不受上述禁用影响——多列行级筛选就用 `filter(if_all()/if_any(), .by)`（见范式 4）。
+
+> 铁律与 `data-cleaning` 技能的"R 风格铁律"同源（`=`、`|>`、`\(x)`、`.by`、禁 `ifelse`/`merge`/`%>%`/旧 scoped 变体）。两处任一改动，必须双向同步；本节的 `all()`/`if_all()`/`if_any()` 澄清与范式 4 的 NA 传播陷阱为本 skill 特有。
 
 ## 10. 自检清单
 
