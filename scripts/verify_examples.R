@@ -171,7 +171,26 @@ results = c(
     g = tibble(region = c("A", "B"), month = c(1, 3), sales = c(10, 30))
     cg = g |> complete(region, month = 1:3, fill = list(sales = 0))       # 6.16
     stopifnot(nrow(cg) == 6, sum(cg$sales, na.rm = TRUE) == 40)
+    # 6.13 suffix: same-named columns get explicit suffixes, not silent .x/.y
+    sj = tibble(id = 1, v = 5) |> left_join(tibble(id = 1, v = 2), by = "id",
+                                            suffix = c("_ord", "_cust"))
+    stopifnot(identical(names(sj), c("id", "v_ord", "v_cust")))
     cg
+  }),
+
+  ## ---- Quick-reference 6.17: rank family tie semantics ----------------------
+  run_case("P13 rank family tie semantics", {
+    x = c(10, 10, 20)
+    stopifnot(
+      all(min_rank(x) == c(1, 1, 3)),        # ties share rank, then skip
+      all(dense_rank(x) == c(1, 1, 2)),      # ties share rank, no skip
+      all(row_number(x) == c(1, 2, 3))       # forced sequence
+    )
+    # grouped rank (paradigm 3 territory): sales 10,30,20 -> desc ranks 3,1,2
+    df = tibble(store = c("A", "A", "A", "B"), sales = c(10, 30, 20, 5))
+    out = df |> mutate(rk = min_rank(-sales), .by = store)
+    stopifnot(out$rk[out$store == "A"] == c(3, 1, 2), out$rk[out$store == "B"] == 1)
+    out
   }),
 
   ## ---- Paradigm 7 extension: grouped slide_dbl (.by per-group windows) -----

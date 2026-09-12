@@ -138,10 +138,13 @@ compatibility: claude-code, zcode, opencode, codex
    ├─ 每组内修改列 → 范式 3：mutate(.by=)
    ├─ 行级筛选 → 范式 4：filter(.by=)
    ├─ 组级筛选（含某值则整组删） → 范式 4：filter(all(), .by=)
+   ├─ 每组取最新/最大/前 N 行 → 速查 6.15：slice_max/slice_head
+   ├─ 组内排名 → 速查 6.17：排名族
    ├─ 每组返回标量若干行 → reframe(.by=)（轻量）
    └─ 每组对子数据框复杂变换 → 范式 5：nest + map
 
 3. 需要迭代/窗口吗？
+   ├─ 序列有缺月/缺行 → 先补全网格（速查 6.16）
    ├─ 累计迭代（用上次结果算这次） → 范式 6：accumulate
    └─ 滑动窗口（相邻比较） → 范式 7：slide
 
@@ -254,6 +257,8 @@ fits = tibble(col = names(df[-1]), fit = map(df[-1], \(x) lm(y ~ x, data = df)))
 ```r
 df |> left_join(y, by = c("id" = "cust_id"))     # 左表 id 对右表 cust_id
 # 或 by = join_by(id == cust_id)；⚠ bind_rows 是堆叠不是连接，别在"合并"名下混用
+# ⚠ 同名列冲突默认加后缀 .x=左表/.y=右表，错引列即静默错值——语义化命名：
+df |> left_join(y, by = "id", suffix = c("_订单", "_客户"))
 ```
 
 ### 6.14 拆分列（编码 → 多列，tidyr ≥1.3 的 separate_wider_*）
@@ -275,6 +280,14 @@ df |> slice_head(n = 2, by = 组)                             # 每组前 2 行
 ```r
 df |> complete(地区, 月份 = 1:12, fill = list(销量 = 0))
 # ⚠ 滑窗/累计（范式 6/7）前先补全，否则窗口错位静默算错
+```
+
+### 6.17 排名族（并列语义三选一）
+```r
+df |> mutate(rk = min_rank(-销量), .by = 门店)     # 并列同名次、跳号：1,1,3（综合案例同款）
+df |> mutate(rk = dense_rank(-销量), .by = 门店)   # 并列同名次、不跳号：1,1,2
+df |> mutate(rk = row_number(-销量), .by = 门店)   # 强制顺序（并列也分先后）：1,2,3
+# 取名次而非排名用 6.15 slice_max；负号 = 降序排名
 ```
 
 ## 7. 反模式（绝对要避免的）
