@@ -47,6 +47,8 @@ compatibility: claude-code, zcode, opencode, codex
 | `across()` / `if_any()` | dplyr | 1.0.4 |
 | `reframe(.by = )` | dplyr | 1.1.0 |
 | `nest(.by = )` | tidyr | 1.3.0 |
+| `separate_wider_*` | tidyr | 1.3.0 |
+| `slice_max(..., by = )` | dplyr | 1.1.0 |
 | `pivot_longer/wider` | tidyr | 1.0.0 |
 | `accumulate()` | purrr | — |
 | `slide()` / `slide_dbl()` | slider | — |
@@ -128,7 +130,7 @@ compatibility: claude-code, zcode, opencode, codex
 ```
 1. 数据整洁吗？
    ├─ 列名含信息（如 month_1, Q1, daw_1_） → 范式 1：pivot_longer
-   ├─ 需要拆分列（如 "01-A001,02"） → separate + stringr
+   ├─ 需要拆分列（如 "01-A001"） → separate_wider_*（速查 6.14）
    └─ 需要多表合并？ → left_join / right_join / bind_rows
 
 2. 需要分组吗？
@@ -246,6 +248,33 @@ fits = tibble(col = names(df[-1]), fit = map(df[-1], \(x) lm(y ~ x, data = df)))
 # 绘图：对"一份"数据写好画图函数后 map 过去（绘图语法本身不在本技能范围）
 ```
 
+### 6.13 多表连接的键名不同
+```r
+df |> left_join(y, by = c("id" = "cust_id"))     # 左表 id 对右表 cust_id
+# 或 by = join_by(id == cust_id)；⚠ bind_rows 是堆叠不是连接，别在"合并"名下混用
+```
+
+### 6.14 拆分列（编码 → 多列，tidyr ≥1.3 的 separate_wider_*）
+```r
+df |> separate_wider_delim(编码, delim = "-", names = c("区号", "编号"))
+# 按位宽拆：separate_wider_position(编码, widths = c(2, 4))
+# ⚠ 旧 separate() 已 superseded，新代码不再使用
+```
+
+### 6.15 组内取行（最新 / 最大 / 前 N）
+```r
+df |> slice_max(时间, n = 1, by = 客户)                      # 每客户最新 1 条（平局默认全保留）
+df |> slice_max(时间, n = 1, by = 客户, with_ties = FALSE)   # 平局也只留 1 条
+df |> slice_head(n = 2, by = 组)                             # 每组前 2 行
+# 也可用范式 4：filter(时间 == max(时间), .by = 客户)——平局会保留多行，需形状预判时留意
+```
+
+### 6.16 补全组合网格（缺失组合填 0）
+```r
+df |> complete(地区, 月份 = 1:12, fill = list(销量 = 0))
+# ⚠ 滑窗/累计（范式 6/7）前先补全，否则窗口错位静默算错
+```
+
 ## 7. 反模式（绝对要避免的）
 
 | 反模式 | 为什么错 | 正确做法 |
@@ -260,7 +289,8 @@ fits = tibble(col = names(df[-1]), fit = map(df[-1], \(x) lm(y ~ x, data = df)))
 | 用 Python 式列表/集合思维 | 数据框原生操作更简洁 | `distinct`/`count`/`filter` |
 | `across` 搭配 `if_any` 混淆 | `if_any` 是筛选行，`across` 是修改列 | 分清场景再选函数 |
 | 管道内混合 `\|>` 和 `%>%` | 不一致 | 统一 `\|>` |
-| 取反 `filter(!if_any(...))` | `if_any` 的 NA 传播：含 NA 行整行按 FALSE **静默丢弃** | 检测条件内先 `coalesce(x, "")` 兜底（详述见 references/paradigms.md 范式 4） |
+| 取反 `filter(!if_any(...))` | `if_any` 的 NA 传播：所选列含 NA 且其余列不匹配时，该行按 FALSE **静默丢弃** | 检测条件内先 `coalesce(x, "")` 兜底（详述见 references/paradigms.md 范式 4） |
+| 累计/滑窗不先排序 | `accumulate`/`lag` 依赖行内顺序，乱序**静默算错** | 先 `arrange(分组列, 时间列)`（范式 3/6 注意栏） |
 
 ## 8. 常见问题与错误思维（破除外来习惯）
 

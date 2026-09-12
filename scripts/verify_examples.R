@@ -155,6 +155,23 @@ results = c(
       nrow(out) == 5
     )
     out
+  }),
+
+  ## ---- Quick-reference 6.13-6.16: renamed keys / split / slice_max / complete
+  run_case("P11 quickref 6.13-6.16", {
+    l = tibble(id = c("01-A001", "02-B002"))
+    r = tibble(cust_id = c("01-A001", "02-B002"), score = c(9, 8))
+    j = l |> left_join(r, by = c("id" = "cust_id"))            # 6.13 renamed keys
+    stopifnot(nrow(j) == 2, all(!is.na(j$score)))
+    s = l |> separate_wider_delim(id, delim = "-", names = c("area", "code"))
+    stopifnot(identical(names(s), c("area", "code")), s$area[1] == "01")  # 6.14
+    d = tibble(cust = c("x", "x", "y"), dt = c(1, 3, 2), v = 1:3)
+    sm = d |> slice_max(dt, n = 1, by = cust)                  # 6.15 latest per key
+    stopifnot(nrow(sm) == 2, sm$dt[sm$cust == "x"] == 3)
+    g = tibble(region = c("A", "B"), month = c(1, 3), sales = c(10, 30))
+    cg = g |> complete(region, month = 1:3, fill = list(sales = 0))       # 6.16
+    stopifnot(nrow(cg) == 6, sum(cg$sales, na.rm = TRUE) == 40)
+    cg
   })
 )
 
