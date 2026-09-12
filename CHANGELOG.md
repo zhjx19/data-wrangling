@@ -1,0 +1,33 @@
+# Changelog
+
+格式参考 [keepachangelog](https://keepachangelog.com/) 精神：每条讲清"为什么改"，不只"改了什么"。
+
+## [1.1.0] — 2026-09-12 鲁班精雕
+
+### Fixed
+- **回归脚本 locale 脆弱**：`verify_examples.R` 含 67 行中文，在 Git Bash 破损 LC_CTYPE 环境下
+  R 解析直接中断（实测 0/8 静默失效）——整体 ASCII 化（标识符改英文、注释英文化），
+  现在任意 locale 可跑。基线逻辑一字未变。
+
+### Added
+- **范式 4 新陷阱**：取反 `filter(!if_any(...))` 的 NA 传播会静默丢行——
+  来自 data-cleaning skill 红队推演的实战发现，回归至此归属本技能管辖域。
+  修法 `coalesce(x, "")` 兜底；反模式表新行 + 回归第 9 例实证。
+- **frontmatter 可发现性**：补 Triggers 中英词表、`related-skills`（回指 data-cleaning）、
+  `compatibility`（claude-code/zcode/opencode/codex）。
+- **铁律双向同步契约**：data-cleaning 侧已有单向契约指向本技能 §9，此处补上回指，
+  两份铁律任一改动必须双向同步。
+- **prompt 实测回归**：`scripts/verify_prompts.R` 把 3 条 test-prompts 从 dry_run 升级为实跑断言
+  （12 列宽表转长、环比+组级筛选、永续盘存 accumulate），7 检查。
+
+### Changed
+- **SKILL.md 下沉重构**：范式详述（何时用/思维轨迹/案例/注意）与综合案例下沉
+  `references/paradigms.md`，主文件瘦身成定位器形态（23.5KB → 15.8KB）：
+  快速定位表 + 五步法 + 范式速览表 + 决策树 + 速查留在主体。
+- 自检清单补"交付前对照第①步形状预判"检查点。
+
+## [1.0.0] — 2026-08-26 基线
+
+- 8 范式框架 + 五步数据思维法 + 决策树 + 代码范型速查 + 反模式黑名单 + 破除外来思维 + 综合案例
+- `verify_examples.R` 一键回归（8 范式 + 综合案例）；test-prompts.json 3 条
+- 历史：dim2/3/5 三轮优化（accumulate 长度对齐、lag 排序前提、scoped 变体消歧、ml-mlr3 路由）
