@@ -78,9 +78,9 @@ cp -r tidy-data ~/.claude/skills/
 |---|---|
 | 问题 → 范式定位 | 快速定位表 + 决策树（SKILL.md 内） |
 | 范式思维教学 | 8 范式详述：何时用 / 思维轨迹 / 案例 / 注意（references/paradigms.md） |
-| 可复制代码 | 11 段最短范型速查（SKILL.md §6） |
-| 思维纠正 | 反模式黑名单 11 条 + 破除外来习惯 6 问 |
-| 质量保证 | 双回归：9 范式例 + 3 题 prompt 实测，一键运行 |
+| 可复制代码 | 17 段最短范型速查（SKILL.md §6） |
+| 思维纠正 | 反模式黑名单 12 条 + 破除外来习惯 6 问 |
+| 质量保证 | 双回归：13 例（含陷阱与组合） + 3 题 prompt 实测，一键运行 |
 
 ## 它和同类有什么不同
 
@@ -89,7 +89,7 @@ cp -r tidy-data ~/.claude/skills/
 | 定位 | 教"怎么写对代码" | 教"怎么想清楚问题"：问题信号 → 范式定位 |
 | 组织 | 按函数/主题排列 | 按问题信号排列（8 范式 + 决策树） |
 | 思维纠正 | 少见 | §8 专治 Python 式 for 循环/列表/集合思维 |
-| 质量保证 | 部分有测试说明 | 9 范式例 + 3 题 prompt 双回归，任意 locale 可跑 |
+| 质量保证 | 部分有测试说明 | 13 例（含陷阱与组合）+ 3 题 prompt 双回归，任意 locale 可跑 |
 
 ## 安全边界
 
@@ -103,8 +103,9 @@ cp -r tidy-data ~/.claude/skills/
 ```text
 ├── SKILL.md                    定位器：总纲 + 定位表 + 五步法 + 范式速览 + 决策树 + 速查
 ├── references/paradigms.md     8 范式详述（何时用/思维轨迹/案例/注意）+ 综合案例
-├── scripts/verify_examples.R   9 例范式回归（任意 locale 可跑）
+├── scripts/verify_examples.R   13 例范式回归（任意 locale 可跑）
 ├── scripts/verify_prompts.R    3 题 prompt 实测回归
+├── scripts/check_consistency.py 28 项声明-实物一致性对账
 ├── test-prompts.json           3 条行为测试题
 ├── assets/data-thinking-2.0.png 数据思维 2.0 总纲思维导图
 └── CHANGELOG.md                版本史
@@ -113,8 +114,9 @@ cp -r tidy-data ~/.claude/skills/
 ## 验证与测试
 
 ```bash
-Rscript --vanilla scripts/verify_examples.R   # === Summary: 9/9 PASS ===
+Rscript --vanilla scripts/verify_examples.R   # === Summary: 13/13 PASS ===
 Rscript --vanilla scripts/verify_prompts.R    # === Summary: 7 check(s), 0 failure(s) ===
+python scripts/check_consistency.py           # 28 项声明-实物对账，全部 PASS
 ```
 
 行为测试见 [test-prompts.json](test-prompts.json)：含一条"我想用 for 循环逐行算"的对抗性
