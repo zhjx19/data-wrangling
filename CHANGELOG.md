@@ -23,6 +23,7 @@
 
 ### Changed
 - 决策树 Q5 三分支化（across / 先长后宽 / map 遍历列）。
+- README.en.md 双语入口（house-style 语言互链）。
 
 ## [1.3.0] — 2026-09-13 红队一轮补货
 
