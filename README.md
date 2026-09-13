@@ -9,6 +9,7 @@
 [![Agent Skills](https://img.shields.io/badge/Agent_Skills-tidy--data-blueviolet)](SKILL.md)
 [![R](https://img.shields.io/badge/R-tidyverse-blue)](https://www.tidyverse.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![skills.sh](https://skills.sh/b/zhjx19/tidy-data)](https://skills.sh/zhjx19/tidy-data)
 
 **不是又一个 tidyverse 函数参考，而是一个"问题 → 范式"定位器：拿到任何表格数据问题，30 秒定位到该用哪个范式想、该抄哪段代码。**
 
@@ -53,8 +54,9 @@ Agent：（套用五步法）①形状预判：12 行长表 → ②列名含信�
 把本目录复制进你的 Agent 技能目录（SKILL.md 形态，Claude Code / ZCode / OpenCode / Codex 通用）：
 
 ```bash
-# 以 Claude Code 为例（目录按你的 runtime 调整）
-cp -r tidy-data ~/.claude/skills/
+npx skills add zhjx19/tidy-data                # skills.sh 一键安装
+# 或手动克隆（目录按你的 runtime 调整）：
+git clone https://github.com/zhjx19/tidy-data && cp -r tidy-data ~/.claude/skills/
 ```
 
 装完对 Agent 说：
@@ -106,6 +108,7 @@ cp -r tidy-data ~/.claude/skills/
 ├── scripts/verify_examples.R   13 例范式回归（任意 locale 可跑）
 ├── scripts/verify_prompts.R    3 题 prompt 实测回归
 ├── scripts/check_consistency.py 28 项声明-实物一致性对账
+├── CHANGELOG.md                版本史
 ├── test-prompts.json           3 条行为测试题
 ├── assets/data-thinking-2.0.png 数据思维 2.0 总纲思维导图
 └── CHANGELOG.md                版本史
