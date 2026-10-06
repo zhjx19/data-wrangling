@@ -6,6 +6,14 @@
 # mechanizes that closing step: every declared number must equal the actual
 # count, every referenced file must exist, no stale tokens may remain.
 #
+# The scope grew after the tidy-data -> data-wrangling rename proved that a
+# rename is exactly the class of edit this script used to miss (it only counted
+# numbers, so a leftover old name passed silently). Now it also guards:
+#   - identity: directory name == frontmatter name == README titles
+#   - cross-skill contracts: related-skills resolve and point back
+#   - routing: no sibling claims our trigger phrases without delegating to us
+#   - narrative artifacts (examples/) and the declared check count itself
+#
 # Python on purpose: unicode-safe under any locale (the R sibling scripts hit
 # parser/locale landmines documented in their headers). Run from anywhere:
 #   python scripts/check_consistency.py
@@ -106,7 +114,11 @@ for f in ["references/paradigms.md", "assets/data-thinking-2.0.png",
           "scripts/verify_examples.R", "scripts/verify_prompts.R",
           "scripts/check_consistency.py",
           "test-prompts.json", "LICENSE", "CHANGELOG.md", "README.md",
-          "SKILL.md"]:
+          "README.en.md", "MAINTAINING.md", "SKILL.md",
+          "examples/README.md",
+          "examples/case-01-wide-to-long.md",
+          "examples/case-02-grouped-mom-and-complete-groups.md",
+          "examples/case-03-perpetual-inventory.md"]:
     check("file exists: " + f, os.path.exists(os.path.join(ROOT, f)))
 
 # 6. no stale tokens (superseded / outdated claims) ----------------------------
@@ -119,6 +131,114 @@ for d in docs:
           "found: " + ", ".join(hit) if hit else "")
 check("SKILL.md: no bare separate( (superseded)",
       re.search(r"(?<!旧 )separate\(", sk) is None)
+
+# 7. identity: directory name == frontmatter name == README titles ------------
+# A rename must be all-or-nothing: the skill id IS the directory name, so any
+# mismatch silently forks the identity across runtimes.
+PARENT = os.path.dirname(ROOT)
+DIRNAME = os.path.basename(ROOT)
+fm = re.search(r"\A---\s*\n(.*?)\n---\s*\n", sk, re.S)
+front = fm.group(1) if fm else ""
+name_m = re.search(r"^name:\s*(\S+)\s*$", front, re.M)
+skill_name = name_m.group(1) if name_m else ""
+check("frontmatter name == directory name", skill_name == DIRNAME,
+      "name={!r} dir={!r}".format(skill_name, DIRNAME))
+for rd in ["README.md", "README.en.md"]:
+    h1 = re.search(r"^#\s+(\S+)", read_doc(rd), re.M)
+    check("{} H1 carries the skill id".format(rd),
+          bool(h1) and h1.group(1) == skill_name,
+          "H1={!r} name={!r}".format(h1.group(1) if h1 else None, skill_name))
+
+# 8. cross-skill contracts: related-skills resolve, peers point back ----------
+rel_block = re.search(r"^related-skills:\s*\n((?:\s+-\s+\S+\s*\n)+)", front, re.M)
+peers = re.findall(r"-\s*(\S+)", rel_block.group(1)) if rel_block else []
+check("related-skills declares at least one peer", len(peers) > 0)
+for peer in peers:
+    check("related-skill exists: " + peer,
+          os.path.isdir(os.path.join(PARENT, peer)))
+    p = os.path.join(PARENT, peer, "SKILL.md")
+    if os.path.isfile(p):
+        with open(p, encoding="utf-8") as f:
+            peer_text = f.read()
+        check("peer {} links back to {}".format(peer, skill_name),
+              skill_name in peer_text)
+
+# 9. the legacy skill name must not survive in live docs ----------------------
+# (CHANGELOG is exempt: it is the one place the old name must stay, to explain
+# the rename. Everything a reader would follow today must use the new name.)
+LEGACY_NAME = "tidy-data"
+for d in ["SKILL.md", "references/paradigms.md", "README.md", "README.en.md",
+          "scripts/verify_examples.R", "scripts/verify_prompts.R",
+          "MAINTAINING.md", "examples/README.md"]:
+    check("{}: no legacy skill name".format(d),
+          LEGACY_NAME not in read_doc(d))
+
+# 10. routing signals ---------------------------------------------------------
+# Offline we cannot measure "did the agent pick this skill", but we can measure
+# the signals selection depends on: declared triggers, a stated boundary, and
+# whether a co-resident skill claims our phrases without delegating to us.
+check("description declares Triggers:", "Triggers:" in front)
+check("description declares a negative boundary", "不适用" in front)
+tr_m = re.search(r"Triggers:\s*(.+)", front)
+n_trigger = len([t for t in re.split(r"[/、]", tr_m.group(1))
+                 if t.strip(" .。")]) if tr_m else 0
+check("triggers: at least 6 vocabulary entries", n_trigger >= 6,
+      "found {}".format(n_trigger))
+
+DISTINCTIVE = ["数据思维", "tidyverse 怎么写", "宽表转长表", "不要用 for 循环"]
+# Accepted overlaps: restating a phrase while NOT delegating is the anti-pattern
+# we fail on. Exceptions are peers whose overlap we know about and deliberately
+# did not rewrite (that is their author's call, not ours).
+KNOWN_OVERLAPS = {
+    "learning-method": "restates 数据思维 in its references/tidyverse-style.md; "
+                       "left to that skill's author",
+}
+roamers = []
+for sib in sorted(os.listdir(PARENT)):
+    if sib == DIRNAME or not os.path.isdir(os.path.join(PARENT, sib)):
+        continue
+    p = os.path.join(PARENT, sib, "SKILL.md")
+    if not os.path.isfile(p):
+        continue
+    with open(p, encoding="utf-8") as f:
+        sib_text = f.read()
+    hits = [w for w in DISTINCTIVE if w in sib_text]
+    if hits and skill_name not in sib_text and sib not in KNOWN_OVERLAPS:
+        roamers.append("{}: {}".format(sib, ",".join(hits)))
+check("no sibling claims our triggers without delegating", not roamers,
+      "; ".join(roamers))
+
+# 11. narrative artifacts (examples/) ----------------------------------------
+N_EXAMPLES = 3
+cl_ex = re.findall(r"(\d+) 个真实案例", read_doc("README.md"))
+check("README: '(N) 个真实案例' claim present and == {}".format(N_EXAMPLES),
+      len(cl_ex) > 0 and all(int(x) == N_EXAMPLES for x in cl_ex),
+      "no claim found" if len(cl_ex) == 0 else
+      ("claimed: " + ",".join(sorted({x for x in cl_ex if int(x) != N_EXAMPLES}))
+       if any(int(x) != N_EXAMPLES for x in cl_ex) else ""))
+n_case_files = len([f for f in os.listdir(os.path.join(ROOT, "examples"))
+                    if re.match(r"case-\d\d-.*\.md$", f)])
+check("examples/ holds {} case files".format(N_EXAMPLES),
+      n_case_files == N_EXAMPLES, "found {}".format(n_case_files))
+
+# 12. the declared check count itself ----------------------------------------
+# The self-count checks below are themselves counted, so the number the docs
+# must declare is known in advance: total so far + one per doc examined.
+# Deriving it from the same list keeps the counter and the claim in lockstep.
+SELF_COUNT_DOCS = ["README.md", "SKILL.md", "README.en.md"]
+REPORTED = total + len(SELF_COUNT_DOCS)
+for d in SELF_COUNT_DOCS:
+    dt = read_doc(d)
+    claimed = re.findall(r"(\d+)\s*(?:项|doc-vs-reality)", dt)
+    check("{}: '(N) 项' self-count == {}".format(d, REPORTED),
+          len(claimed) > 0 and all(int(x) == REPORTED for x in claimed),
+          "no claim found" if len(claimed) == 0 else
+          ("claimed: " + ",".join(sorted({x for x in claimed if int(x) != REPORTED}))
+           if any(int(x) != REPORTED for x in claimed) else ""))
+if total != REPORTED:  # arithmetic guard; does not call check() on purpose
+    print("[FAIL] self-count bookkeeping -- total={} REPORTED={}".format(
+        total, REPORTED))
+    failures += 1
 
 # summary -----------------------------------------------------------------------
 print("\nSummary: {} check(s), {} failure(s)".format(total, failures))

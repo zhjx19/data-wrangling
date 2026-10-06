@@ -51,6 +51,18 @@ Agent: (five-step method) ① shape prediction: a 12-row long table
 
 Or: **"I want a for loop to compute capital stock row by row (perpetual inventory)"** → Paradigm 6 `accumulate(.init=)` in three lines, plus the mind-correction for why the loop is the wrong reflex. All 8 paradigms: [SKILL.md quick-locator table](SKILL.md).
 
+## Worked cases
+
+Three worked cases, each `user's own words → five-step locating → code → **real output**`, with the output taken from the same fixtures as `scripts/verify_prompts.R` (not hand-written):
+
+| Case | What it shows |
+|---|---|
+| [case-01 wide to long](examples/case-01-wide-to-long.md) | When info lives in column names, step one is always reshaping — not `summarise` |
+| [case-02 grouped MoM + drop incomplete groups](examples/case-02-grouped-mom-and-complete-groups.md) | "Drop the group" vs "drop the row" — the easiest step to get wrong |
+| [case-03 perpetual inventory (anti `for` loop)](examples/case-03-perpetual-inventory.md) | The user asks "how do I write the loop"; the correct move is to fix the question first |
+
+Index and how to re-run: [examples/README.md](examples/README.md).
+
 ## Quick start
 
 **Prerequisites**: this skill generates and runs R code — you need R installed (≥4.2 recommended, with dplyr ≥1.1, tidyr ≥1.3, purrr, slider).
@@ -87,7 +99,7 @@ table and goal)
 | Paradigm thinking | 8 paradigms: when to use / thought trajectory / case / caveats (references/paradigms.md) |
 | Copy-paste code | 17 shortest-form snippets (SKILL.md §6) |
 | Mind corrections | 12-row anti-pattern blacklist + 6 "break foreign habits" questions |
-| Quality assurance | Triple regression: 13 paradigm cases + 3 prompt tests + 28 doc-vs-reality checks |
+| Quality assurance | Four-part self-check: 13 paradigm cases + 3 prompt tests + 57 doc-vs-reality checks + 3 worked cases |
 
 ## How it differs
 
@@ -96,7 +108,7 @@ table and goal)
 | Positioning | Teaches "how to write correct code" | Teaches "how to think about the problem": signal → paradigm |
 | Organization | By function / topic | By problem signal (8 paradigms + decision tree) |
 | Mind corrections | Rare | A dedicated section against Python-style loop/list/set thinking |
-| Quality assurance | Sometimes described | Triple regression (13 + 3 + 28), locale-proof, one command |
+| Quality assurance | Sometimes described | Four-part self-check (cases + prompts + doc-vs-reality + worked cases), locale-proof, one command |
 
 ## Safety boundaries
 
@@ -110,9 +122,11 @@ table and goal)
 ```text
 ├── SKILL.md                    Locator: overview + five-step method + paradigm index + decision tree + snippets
 ├── references/paradigms.md     8 paradigms in full (when / trajectory / case / caveats) + capstone case
+├── examples/                   3 worked cases: input → locating → code → real output
 ├── scripts/verify_examples.R   13 paradigm-case regressions (locale-proof)
 ├── scripts/verify_prompts.R    3 prompt-level regression tests
-├── scripts/check_consistency.py 28 doc-vs-reality consistency checks
+├── scripts/check_consistency.py 57 doc-vs-reality consistency checks (counts / refs / identity / contracts / routing)
+├── MAINTAINING.md              Peer watch list + iteration discipline + next-round entries
 ├── test-prompts.json           3 behavioral test prompts
 ├── assets/data-thinking-2.0.png Data Thinking 2.0 mind map
 └── CHANGELOG.md                Version history
@@ -123,8 +137,10 @@ table and goal)
 ```bash
 Rscript --vanilla scripts/verify_examples.R   # === Summary: 13/13 PASS ===
 Rscript --vanilla scripts/verify_prompts.R    # === Summary: 7 check(s), 0 failure(s) ===
-python scripts/check_consistency.py           # 28 doc-vs-reality checks, all PASS
+python scripts/check_consistency.py           # 57 doc-vs-reality checks, all PASS
 ```
+
+The third one does more than tally numbers: it verifies **skill-name identity** (directory name = frontmatter `name` = README title), **cross-skill contracts** (`related-skills` pointing both ways), **routing signals** (no sibling claiming our trigger phrases without delegating to us), and the **self-declared check count**. Any count, reference or rename edit is done only when it is green — see [MAINTAINING.md](MAINTAINING.md).
 
 Behavioral tests live in [test-prompts.json](test-prompts.json), including one adversarial
 prompt — "I want a for loop to iterate row by row" — where correct behavior is to break the

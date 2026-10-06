@@ -14,7 +14,7 @@
 
 **不是又一个 tidyverse 函数参考，而是一个"问题 → 范式"定位器：拿到任何表格数据问题，30 秒定位到该用哪个范式想、该抄哪段代码。**
 
-[看效果](#效果示例) · [安装](#快速开始) · [触发方式](#触发方式) · [它和同类有什么不同](#它和同类有什么不同) · [验证](#验证与测试)
+[看效果](#效果示例) · [真实案例](#真实案例) · [安装](#快速开始) · [触发方式](#触发方式) · [它和同类有什么不同](#它和同类有什么不同) · [验证](#验证与测试)
 
 </div>
 
@@ -47,6 +47,18 @@ Agent：（套用五步法）①形状预判：12 行长表 → ②列名含信�
 ```
 
 再比如：**"我想写个 for 循环逐行算永续盘存法"** → 范式 6 `accumulate(.init=)` 三行搞定，附"为什么不许用循环"的思维纠正。全部 8 范式见 [SKILL.md 快速定位表](SKILL.md)。
+
+## 真实案例
+
+3 个真实案例，每个都是「用户原话 → 五步法定位 → 代码 → **真实输出**」，输出取自 `scripts/verify_prompts.R` 的同一套夹具（不是手写的）：
+
+| 案例 | 看点 |
+|---|---|
+| [case-01 宽表转长表](examples/case-01-wide-to-long.md) | 列名含信息时，第一步永远是重塑——不是先想 `summarise` |
+| [case-02 分组环比 + 删缺失组](examples/case-02-grouped-mom-and-complete-groups.md) | 「删整组」vs「删那一行」——最容易错的一步 |
+| [case-03 永续盘存（对抗 `for` 循环）](examples/case-03-perpetual-inventory.md) | 用户问「怎么写循环」，合格表现是先纠正问法 |
+
+索引与复跑方式见 [examples/README.md](examples/README.md)。
 
 ## 快速开始
 
@@ -83,7 +95,7 @@ git clone https://github.com/zhjx19/data-wrangling && cp -r data-wrangling ~/.cl
 | 范式思维教学 | 8 范式详述：何时用 / 思维轨迹 / 案例 / 注意（references/paradigms.md） |
 | 可复制代码 | 17 段最短范型速查（SKILL.md §6） |
 | 思维纠正 | 反模式黑名单 12 条 + 破除外来习惯 6 问 |
-| 质量保证 | 双回归：13 例（含陷阱与组合） + 3 题 prompt 实测，一键运行 |
+| 质量保证 | 四件套：13 例范式回归 + 3 题 prompt 实测 + 声明-实物对账 + 3 个真实案例（`examples/`） |
 
 ## 它和同类有什么不同
 
@@ -92,7 +104,7 @@ git clone https://github.com/zhjx19/data-wrangling && cp -r data-wrangling ~/.cl
 | 定位 | 教"怎么写对代码" | 教"怎么想清楚问题"：问题信号 → 范式定位 |
 | 组织 | 按函数/主题排列 | 按问题信号排列（8 范式 + 决策树） |
 | 思维纠正 | 少见 | §8 专治 Python 式 for 循环/列表/集合思维 |
-| 质量保证 | 部分有测试说明 | 13 例（含陷阱与组合）+ 3 题 prompt 双回归，任意 locale 可跑 |
+| 质量保证 | 部分有测试说明 | 13 例 + 3 题 prompt + 声明-实物对账，四件套任意 locale 可跑 |
 
 ## 安全边界
 
@@ -104,13 +116,15 @@ git clone https://github.com/zhjx19/data-wrangling && cp -r data-wrangling ~/.cl
 ## 文件结构
 
 ```text
-├── SKILL.md                    定位器：总纲 + 定位表 + 五步法 + 范式速览 + 决策树 + 速查
-├── references/paradigms.md     8 范式详述（何时用/思维轨迹/案例/注意）+ 综合案例
-├── scripts/verify_examples.R   13 例范式回归（任意 locale 可跑）
-├── scripts/verify_prompts.R    3 题 prompt 实测回归
-├── scripts/check_consistency.py 28 项声明-实物一致性对账
-├── CHANGELOG.md                版本史
-├── test-prompts.json           3 条行为测试题
+├── SKILL.md                     定位器：总纲 + 定位表 + 五步法 + 范式速览 + 决策树 + 速查
+├── references/paradigms.md      8 范式详述（何时用/思维轨迹/案例/注意）+ 综合案例
+├── examples/                    3 个真实案例：输入 → 定位 → 代码 → 真实输出
+├── scripts/verify_examples.R    13 例范式回归（任意 locale 可跑）
+├── scripts/verify_prompts.R     3 题 prompt 实测回归
+├── scripts/check_consistency.py 57 项声明-实物对账（计数/引用/身份/契约/路由）
+├── MAINTAINING.md               对标观察清单 + 迭代纪律 + 下一轮入口
+├── CHANGELOG.md                 版本史
+├── test-prompts.json            3 条行为测试题
 └── assets/data-thinking-2.0.png 数据思维 2.0 总纲思维导图
 ```
 
@@ -119,8 +133,10 @@ git clone https://github.com/zhjx19/data-wrangling && cp -r data-wrangling ~/.cl
 ```bash
 Rscript --vanilla scripts/verify_examples.R   # === Summary: 13/13 PASS ===
 Rscript --vanilla scripts/verify_prompts.R    # === Summary: 7 check(s), 0 failure(s) ===
-python scripts/check_consistency.py           # 28 项声明-实物对账，全部 PASS
+python scripts/check_consistency.py           # 57 项声明-实物对账，全部 PASS
 ```
+
+第三条不只数数：它同时验证**技能名一致性**（目录名 = frontmatter `name` = README 标题）、**跨技能契约**（`related-skills` 双向回指）、**路由信号**（姊妹技能是否无授权占用本技能的触发短语）和**文档自报的检查总数**。凡是计数、引用或改名类改动，它全绿才算改完——维护约定见 [MAINTAINING.md](MAINTAINING.md)。
 
 行为测试见 [test-prompts.json](test-prompts.json)：含一条"我想用 for 循环逐行算"的对抗性
 prompt——合格表现是破除循环思维、改用 `accumulate` 向量化，而不是顺着写循环。

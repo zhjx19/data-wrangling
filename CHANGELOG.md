@@ -2,7 +2,14 @@
 
 格式参考 [keepachangelog](https://keepachangelog.com/) 精神：每条讲清"为什么改"，不只"改了什么"。
 
-## [Unreleased] — 更名为 data-wrangling
+## [Unreleased]
+
+### Added
+- **人看的案例 `examples/`（3 个）**：每个都是「用户原话 → 五步法定位 → 代码 → **真实输出**」，
+  输出取自 `verify_prompts.R` 的同一夹具。此前仓库里只有"机器可跑的断言"，缺"人一眼看得懂的证据"——
+  同行把结果摆首屏，我们只有断言。三例分别对应：宽表转长表 / 删整组 vs 删那一行 / 对抗 `for` 循环。
+- **`MAINTAINING.md`**：对标观察清单（7 个同行 + 各自盯什么 + 什么信号触发行动）、迭代纪律、
+  下一轮入口、已知边界损耗。交活不是终点——这份文档让下一轮从真实反馈进，不从零验料。
 
 ### Changed
 - **技能更名**：`tidy-data` → `data-wrangling`。技能 id 即技能目录名，改名后 Claude Code / Codex /
@@ -11,10 +18,16 @@
   同步改动：`SKILL.md` frontmatter `name`、`README.md` / `README.en.md` 标题与徽章标签、
   `scripts/verify_examples.R` 头注释、姊妹技能 `data-cleaning` / `write-zhihu` / `ml-mlr3`
   的全部引用与 `related-skills` 列表。
-- 本文档 1.4.0 及以前条目中的 `tidy-data` 均指本技能旧名；对外仓库 slug 同步改为
+- 本文档本条目出现之前的 `tidy-data` 均指本技能旧名；对外仓库 slug 同步改为
   `github.com/zhjx19/data-wrangling`（GitHub 对旧 URL 自动重定向，已存在的旧链接不会断）。
-- 首屏补一枚回归徽章（13 例 / 7 检查 / 28 项对账全 PASS）——同行普遍没有自证资产，
+- 首屏补一枚回归徽章（13 例 / 7 检查 / 声明-实物对账全 PASS）——同行普遍没有自证资产，
   把它从 README 末尾提到首屏。`description` 前置「定位器」定位句，补偿新名偏泛化。
+- **对账脚本升级：从"只数数"扩到五类。** `check_consistency.py` 现在同时管
+  ①**身份一致性**（目录名 = frontmatter `name` = README 标题）、②**跨技能契约**（`related-skills` 双向回指）、
+  ③**旧名残留**（live 文档中不得再出现旧技能名，CHANGELOG 除外）、④**路由信号**（姊妹技能无授权占用
+  本技能触发短语时红灯，已知重叠登记在白名单）、⑤**文档自报的检查总数**（对不齐即红灯）。
+  起因是上次改名它能静默通过——**它根本不检查技能名，所以"漏改一处引用"这类错误它抓不住**。
+  这正是"验证资产沉淀"：把一次性的人工 grep 立成仓库里跑得动的规矩。
 
 ## [1.4.0] — 2026-09-13 红队二轮补货 + 收尾工序
 
