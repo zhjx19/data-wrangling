@@ -53,7 +53,12 @@ python scripts/check_consistency.py            # 声明-实物对账（自报总
 
 - **触发准确率无法离线测量。** `check_consistency.py` 只能验证"选择所依赖的信号齐不齐"（triggers 声明、负面边界、姊妹技能是否无授权占用我们的短语），**不能证明 agent 真的会选中它**。
 - **无 GIF / 决策树一页图。** 仓库里唯一可展示产物仍是一张思维导图；录制与图形生成工具未纳入本仓库依赖，故本轮未做。
-- **`learning-method` 存在已知短语重叠。** 它在自己的 `references/tidyverse-style.md` 里重述「数据思维」，但未指向本技能。这是**那个技能的作者**的决定，本轮刻意不改；已登记在 `check_consistency.py` 的白名单里——**任何新增**的无授权占用会硬红灯。
+- **`learning-method` 的短语重叠已消除。** 它原先在自己的 `references/tidyverse-style.md` 与 `SKILL.md` 里
+  重述「数据思维」却不指向本技能；经其作者授权后改为**明确委派**：两处注明"完整框架在 `data-wrangling`、
+  口径冲突以它为准"，并在文末列出超出其最小口径的范式（`accumulate` / `slide` / `join_by(closest)` /
+  `filter(all(), .by=)` / `slice_max(..., by=)` / `complete()`）指向本技能速查，**要求不要另起一套写法**。
+- **`KNOWN_OVERLAPS` 白名单已清空。** 既然唯一的重叠已修好，就把它从豁免名单里撤掉——否则白名单会变成
+  遮蔽未来回归的遮挡物。现在任何姊妹技能重述本技能触发短语而不委派，一律硬红灯（双向已实测）。
 - **分发链接不在本仓库管辖范围。** 若用符号链接把技能分发到多个 runtime 目录，改名时请同步重建；系统不允许创建符号链接时，目录联接（junction）是等价替代。
 
 ## 五、验证资产清单（沉淀，不是脚手架）
@@ -82,6 +87,6 @@ python scripts/check_consistency.py            # 声明-实物对账（自报总
 
 ## 六、本轮明确不做
 
-- 不改 `learning-method`（那是别人的技能与判断）。
+- 不替**未授权**的技能做判断：`learning-method` 那次改动是拿到该作者明确授权后才做的。没有授权的重述，登记进 `KNOWN_OVERLAPS` 并写明理由，不擅自改别人的文档。
 - 不给 `examples/` 加第二套自动断言——会造出双份真相，与"单一事实源"冲突。
 - 不引入任何新依赖：四个脚本刻意保持零依赖、任意 locale 可跑。

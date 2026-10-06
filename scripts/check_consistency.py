@@ -187,12 +187,11 @@ check("triggers: at least 6 vocabulary entries", n_trigger >= 6,
 
 DISTINCTIVE = ["数据思维", "tidyverse 怎么写", "宽表转长表", "不要用 for 循环"]
 # Accepted overlaps: restating a phrase while NOT delegating is the anti-pattern
-# we fail on. Exceptions are peers whose overlap we know about and deliberately
-# did not rewrite (that is their author's call, not ours).
-KNOWN_OVERLAPS = {
-    "learning-method": "restates 数据思维 in its references/tidyverse-style.md; "
-                       "left to that skill's author",
-}
+# we fail on. This dict is empty on purpose: the one overlap we found
+# (learning-method restating 数据思维 without pointing here) was fixed by making
+# it delegate, so it must not stay masked by a whitelist entry. Keep it empty --
+# if a future overlap is genuinely accepted, add it WITH a written reason.
+KNOWN_OVERLAPS = {}
 roamers = []
 for sib in sorted(os.listdir(PARENT)):
     if sib == DIRNAME or not os.path.isdir(os.path.join(PARENT, sib)):
