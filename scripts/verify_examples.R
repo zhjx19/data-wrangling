@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-# verify_examples.R -- one-click regression for the tidy-data skill.
+# verify_examples.R -- one-click regression for the data-wrangling skill.
 #
 # Runs the 8 paradigm code templates from SKILL.md + the capstone case,
 # proving the framework code runs on the current tidyverse version.

@@ -2,14 +2,15 @@
 
 <div align="center">
 
-# tidy-data · Data Thinking
+# data-wrangling · Data Thinking
 
 > *「Most data problems can be solved with one way of thinking: reshape to tidy, decompose into primitives, then pipe it all together.」*
 
-[![Agent Skills](https://img.shields.io/badge/Agent_Skills-tidy--data-blueviolet)](SKILL.md)
+[![Agent Skills](https://img.shields.io/badge/Agent_Skills-data--wrangling-blueviolet)](SKILL.md)
 [![R](https://img.shields.io/badge/R-tidyverse-blue)](https://www.tidyverse.org/)
+[![regression](https://img.shields.io/badge/regression-13%2F13%20%C2%B7%207%2F7%20%C2%B7%2028%2F28%20PASS-brightgreen)](scripts/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![skills.sh](https://skills.sh/b/zhjx19/tidy-data)](https://skills.sh/zhjx19/tidy-data)
+[![skills.sh](https://skills.sh/b/zhjx19/data-wrangling)](https://skills.sh/zhjx19/data-wrangling)
 
 **Not another tidyverse function reference — a problem→paradigm locator: for any tabular data problem, reach the right paradigm in 30 seconds.**
 
@@ -57,9 +58,9 @@ Or: **"I want a for loop to compute capital stock row by row (perpetual inventor
 Install into your agent's skills directory (SKILL.md format; works with Claude Code / ZCode / OpenCode / Codex):
 
 ```bash
-npx skills add zhjx19/tidy-data                # one-line install via skills.sh
-# or clone manually (adjust the directory for your runtime):
-git clone https://github.com/zhjx19/tidy-data && cp -r tidy-data ~/.claude/skills/
+npx skills add zhjx19/data-wrangling             # one-line install via skills.sh
+# or clone manually (repo name = skill name, so the directory and id match):
+git clone https://github.com/zhjx19/data-wrangling && cp -r data-wrangling ~/.claude/skills/
 ```
 
 Then say to your agent:

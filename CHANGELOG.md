@@ -2,6 +2,20 @@
 
 格式参考 [keepachangelog](https://keepachangelog.com/) 精神：每条讲清"为什么改"，不只"改了什么"。
 
+## [Unreleased] — 更名为 data-wrangling
+
+### Changed
+- **技能更名**：`tidy-data` → `data-wrangling`。技能 id 即技能目录名，改名后 Claude Code / Codex /
+  ZCode / OpenCode / WorkBuddy / OpenClaw 各运行时统一以 `data-wrangling` 发现本技能，与
+  `data-cleaning` 的命名体系对齐（旧名 `tidy-data` 不再可触发）。
+  同步改动：`SKILL.md` frontmatter `name`、`README.md` / `README.en.md` 标题与徽章标签、
+  `scripts/verify_examples.R` 头注释、姊妹技能 `data-cleaning` / `write-zhihu` / `ml-mlr3`
+  的全部引用与 `related-skills` 列表。
+- 本文档 1.4.0 及以前条目中的 `tidy-data` 均指本技能旧名；对外仓库 slug 同步改为
+  `github.com/zhjx19/data-wrangling`（GitHub 对旧 URL 自动重定向，已存在的旧链接不会断）。
+- 首屏补一枚回归徽章（13 例 / 7 检查 / 28 项对账全 PASS）——同行普遍没有自证资产，
+  把它从 README 末尾提到首屏。`description` 前置「定位器」定位句，补偿新名偏泛化。
+
 ## [1.4.0] — 2026-09-13 红队二轮补货 + 收尾工序
 
 ### Fixed

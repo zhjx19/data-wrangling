@@ -1,6 +1,7 @@
 ---
-name: tidy-data
+name: data-wrangling
 description: >-
+  R tidyverse 数据问题「定位器」：拿到表格数据问题，先定位该用哪个范式、再动手写码，而不是查函数手册。
   Use when 面对复杂的结构化表格数据处理问题，需要用 R tidyverse（dplyr/tidyr/purrr/slider）解决。
   适合需要五步法分解任务、重塑整洁数据（pivot_longer/pivot_wider）、管道（|>）、分组计算（.by）、
   跨列批量（across）、累计迭代（accumulate）、滑窗（slide）、嵌套批量（nest+map）、非等连接（join_by）

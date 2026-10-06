@@ -2,14 +2,15 @@
 
 <div align="center">
 
-# tidy-data · 数据思维
+# data-wrangling · 数据思维
 
 > *「多数数据问题都可以用同一套数据思维解决：重塑整洁 → 分解操作 → 管道串联。」*
 
-[![Agent Skills](https://img.shields.io/badge/Agent_Skills-tidy--data-blueviolet)](SKILL.md)
+[![Agent Skills](https://img.shields.io/badge/Agent_Skills-data--wrangling-blueviolet)](SKILL.md)
 [![R](https://img.shields.io/badge/R-tidyverse-blue)](https://www.tidyverse.org/)
+[![regression](https://img.shields.io/badge/regression-13%2F13%20%C2%B7%207%2F7%20%C2%B7%2028%2F28%20PASS-brightgreen)](scripts/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![skills.sh](https://skills.sh/b/zhjx19/tidy-data)](https://skills.sh/zhjx19/tidy-data)
+[![skills.sh](https://skills.sh/b/zhjx19/data-wrangling)](https://skills.sh/zhjx19/data-wrangling)
 
 **不是又一个 tidyverse 函数参考，而是一个"问题 → 范式"定位器：拿到任何表格数据问题，30 秒定位到该用哪个范式想、该抄哪段代码。**
 
@@ -54,9 +55,9 @@ Agent：（套用五步法）①形状预判：12 行长表 → ②列名含信�
 把本目录复制进你的 Agent 技能目录（SKILL.md 形态，Claude Code / ZCode / OpenCode / Codex 通用）：
 
 ```bash
-npx skills add zhjx19/tidy-data                # skills.sh 一键安装
-# 或手动克隆（目录按你的 runtime 调整）：
-git clone https://github.com/zhjx19/tidy-data && cp -r tidy-data ~/.claude/skills/
+npx skills add zhjx19/data-wrangling             # skills.sh 一键安装
+# 或手动克隆（仓库名 = 技能名，目录与 id 天然一致）：
+git clone https://github.com/zhjx19/data-wrangling && cp -r data-wrangling ~/.claude/skills/
 ```
 
 装完对 Agent 说：
@@ -110,8 +111,7 @@ git clone https://github.com/zhjx19/tidy-data && cp -r tidy-data ~/.claude/skill
 ├── scripts/check_consistency.py 28 项声明-实物一致性对账
 ├── CHANGELOG.md                版本史
 ├── test-prompts.json           3 条行为测试题
-├── assets/data-thinking-2.0.png 数据思维 2.0 总纲思维导图
-└── CHANGELOG.md                版本史
+└── assets/data-thinking-2.0.png 数据思维 2.0 总纲思维导图
 ```
 
 ## 验证与测试
