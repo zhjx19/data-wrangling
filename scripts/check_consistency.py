@@ -24,6 +24,7 @@
 #   python scripts/check_consistency.py
 # Exit code: 0 = consistent; 1 = drift found.
 
+import json
 import os
 import re
 import sys
@@ -135,6 +136,7 @@ check("README: anti-pattern claim present and == {}".format(n_ap),
 for f in ["references/paradigms.md", "assets/data-thinking-2.0.png",
           "assets/decision-tree.png", "assets/decision-tree.svg",
           "assets/demo.gif",
+          "scripts/scorecard.py", "verification.json",
           "scripts/verify_examples.R", "scripts/verify_prompts.R",
           "scripts/check_consistency.py",
           "test-prompts.json", "LICENSE", "CHANGELOG.md", "README.md",
@@ -268,8 +270,16 @@ check("every scripts/ file is referenced by a doc", not _unclaimed,
 # A claim no script reads is a claim that rots. Two of them did, in the same
 # week: the distribution links (a skills.sh path kept the pre-rename slug and
 # 404'd) and the README regression badge (still 28/28 long after the checker
-# grew to 57). Bind both to the files that actually know the truth.
+# grew to 57). Bind them to the files that actually know the truth.
+#
+# The expected self-count is derived ONCE here and shared by three claims: the
+# README badge, the scorecard artifact, and the docs' own self-count. What still
+# follows is the external-claims checks (link / badge / scorecard) plus one per
+# self-count doc. If this number drifts, all three go red together instead of
+# silently agreeing on a stale value.
 SELF_COUNT_DOCS = ["README.md", "SKILL.md", "README.en.md"]
+TRAILING_CHECKS = 3 + len(SELF_COUNT_DOCS)
+EXPECTED_SELF = total + TRAILING_CHECKS
 
 # (a) Links that carry our identity must carry the CURRENT slug. Peers' links are
 #     left alone -- only URLs naming us (zhjx19) are policed, which is exactly the
@@ -284,19 +294,37 @@ check("external links: identity-bearing URLs carry the current slug",
       not bad_urls, "offending: " + ", ".join(bad_urls))
 
 # (b) The badge hardcodes three counts: the two measured above plus the
-#     self-count this file is about to require. (+1 = this check itself.)
-expected_self = total + 1 + len(SELF_COUNT_DOCS)
+#     self-count this file requires (EXPECTED_SELF).
 badge_bad = []
 for d in ["README.md", "README.en.md"]:
     nums = badge_counts(read_doc(d))
     want = [(n_cases, n_cases), (n_checks, n_checks),
-            (expected_self, expected_self)]
+            (EXPECTED_SELF, EXPECTED_SELF)]
     if nums is None:
         badge_bad.append("{}: no regression badge".format(d))
     elif nums != want:
         badge_bad.append("{}: {} != {}".format(d, nums, want))
 check("external claims: regression badge counts match the scripts",
       not badge_bad, "; ".join(badge_bad))
+
+# (c) The scorecard publishes the same counts as JSON. A published trust
+#     artifact nobody re-reads is exactly the claim that rots -- so bind it.
+#     Refresh with: python scripts/scorecard.py --write
+try:
+    with open(os.path.join(ROOT, "verification.json"), encoding="utf-8") as f:
+        _card = json.load(f)
+    _card_err = ""
+except Exception as _e:
+    _card, _card_err = None, str(_e)
+_want_card = {"regression_cases": n_cases, "prompt_checks": n_checks,
+              "consistency_checks": EXPECTED_SELF}
+if _card is None:
+    _card_bad = "unreadable or missing: " + _card_err
+else:
+    _card_bad = "; ".join("{}: {} != {}".format(k, _card.get(k), v)
+                          for k, v in _want_card.items() if _card.get(k) != v)
+check("scorecard: verification.json carries the current counts", not _card_bad,
+      _card_bad)
 
 # 14. the declared check count itself ----------------------------------------
 # SELF_COUNT_DOCS is defined in section 13 (the badge check needs it first).
