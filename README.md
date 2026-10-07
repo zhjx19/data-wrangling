@@ -18,7 +18,7 @@
 
 </div>
 
-> **更名说明**：本技能原名 `tidy-data`，2026-09 更名为 `data-wrangling`——技能 id 就是目录名，
+> **更名说明**：本技能原名 `tidy-data`，2026-10 更名为 `data-wrangling`——技能 id 就是目录名，
 > 改名是为了与姊妹技能 `data-cleaning` 的命名体系对齐；**旧名不再可触发**。如果你是从旧名找过来的，
 > 把目录与引用改成 `data-wrangling` 即可（GitHub 对旧仓库 URL 自动重定向）。完整改名清单见 [CHANGELOG.md](CHANGELOG.md)。
 
