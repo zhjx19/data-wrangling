@@ -8,7 +8,7 @@
 
 [![Agent Skills](https://img.shields.io/badge/Agent_Skills-data--wrangling-blueviolet)](SKILL.md)
 [![R](https://img.shields.io/badge/R-tidyverse-blue)](https://www.tidyverse.org/)
-[![regression](https://img.shields.io/badge/regression-13%2F13%20%C2%B7%207%2F7%20%C2%B7%2028%2F28%20PASS-brightgreen)](scripts/)
+[![regression](https://img.shields.io/badge/regression-14%2F14%20%C2%B7%207%2F7%20%C2%B7%2057%2F57%20PASS-brightgreen)](scripts/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![skills.sh](https://skills.sh/b/zhjx19/data-wrangling)](https://www.skills.sh/skills/zhjx19/data-wrangling)
 
@@ -99,7 +99,7 @@ table and goal)
 | Paradigm thinking | 8 paradigms: when to use / thought trajectory / case / caveats (references/paradigms.md) |
 | Copy-paste code | 17 shortest-form snippets (SKILL.md §6) |
 | Mind corrections | 12-row anti-pattern blacklist + 6 "break foreign habits" questions |
-| Quality assurance | Four-part self-check: 13 paradigm cases + 3 prompt tests + 57 doc-vs-reality checks + 3 worked cases |
+| Quality assurance | Four-part self-check: 14 paradigm cases + 3 prompt tests + 57 doc-vs-reality checks + 3 worked cases |
 
 ## How it differs
 
@@ -123,7 +123,7 @@ table and goal)
 ├── SKILL.md                    Locator: overview + five-step method + paradigm index + decision tree + snippets
 ├── references/paradigms.md     8 paradigms in full (when / trajectory / case / caveats) + capstone case
 ├── examples/                   3 worked cases: input → locating → code → real output
-├── scripts/verify_examples.R   13 paradigm-case regressions (locale-proof)
+├── scripts/verify_examples.R   14 paradigm-case regressions (locale-proof)
 ├── scripts/verify_prompts.R    3 prompt-level regression tests
 ├── scripts/check_consistency.py 57 doc-vs-reality consistency checks (counts / refs / identity / contracts / routing)
 ├── MAINTAINING.md              Peer watch list + iteration discipline + next-round entries
@@ -135,7 +135,7 @@ table and goal)
 ## Verification & testing
 
 ```bash
-Rscript --vanilla scripts/verify_examples.R   # === Summary: 13/13 PASS ===
+Rscript --vanilla scripts/verify_examples.R   # === Summary: 14/14 PASS ===
 Rscript --vanilla scripts/verify_prompts.R    # === Summary: 7 check(s), 0 failure(s) ===
 python scripts/check_consistency.py           # 57 doc-vs-reality checks, all PASS
 ```

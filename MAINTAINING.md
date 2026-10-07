@@ -7,7 +7,7 @@
 ### 1. 提交前必须跑的三条命令（缺一条即视为未完成）
 
 ```bash
-Rscript --vanilla scripts/verify_examples.R    # 13 例范式代码回归
+Rscript --vanilla scripts/verify_examples.R    # 14 例范式代码回归
 Rscript --vanilla scripts/verify_prompts.R     # 3 题 prompt 端到端断言
 python scripts/check_consistency.py            # 声明-实物对账（自报总数以运行输出为准）
 ```
@@ -65,7 +65,7 @@ python scripts/check_consistency.py            # 声明-实物对账（自报总
 
 | 资产 | 守什么 | 什么时候必须跑 |
 |---|---|---|
-| `scripts/verify_examples.R` | 13 例范式代码在当前 tidyverse 版本下可跑 | 改任何范式代码或速查后 |
+| `scripts/verify_examples.R` | 14 例范式代码在当前 tidyverse 版本下可跑 | 改任何范式代码或速查后 |
 | `scripts/verify_prompts.R` | 3 条行为 prompt 的端到端输出断言 | 改 `test-prompts.json` 或范式后 |
 | `scripts/check_consistency.py` | 计数 / 文件引用 / **身份一致性** / 跨技能契约 / 路由信号 / 自报总数 | 任何文档改动、任何改名 |
 | `examples/` | 给人看的 before/after 证据（输出取自 `verify_prompts.R` 同一夹具） | 与 `verify_prompts.R` 同源，**改其一必改另一** |

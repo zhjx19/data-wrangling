@@ -8,7 +8,7 @@
 
 [![Agent Skills](https://img.shields.io/badge/Agent_Skills-data--wrangling-blueviolet)](SKILL.md)
 [![R](https://img.shields.io/badge/R-tidyverse-blue)](https://www.tidyverse.org/)
-[![regression](https://img.shields.io/badge/regression-13%2F13%20%C2%B7%207%2F7%20%C2%B7%2028%2F28%20PASS-brightgreen)](scripts/)
+[![regression](https://img.shields.io/badge/regression-14%2F14%20%C2%B7%207%2F7%20%C2%B7%2057%2F57%20PASS-brightgreen)](scripts/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![skills.sh](https://skills.sh/b/zhjx19/data-wrangling)](https://www.skills.sh/skills/zhjx19/data-wrangling)
 
@@ -95,7 +95,7 @@ git clone https://github.com/zhjx19/data-wrangling && cp -r data-wrangling ~/.cl
 | 范式思维教学 | 8 范式详述：何时用 / 思维轨迹 / 案例 / 注意（references/paradigms.md） |
 | 可复制代码 | 17 段最短范型速查（SKILL.md §6） |
 | 思维纠正 | 反模式黑名单 12 条 + 破除外来习惯 6 问 |
-| 质量保证 | 四件套：13 例范式回归 + 3 题 prompt 实测 + 声明-实物对账 + 3 个真实案例（`examples/`） |
+| 质量保证 | 四件套：14 例范式回归 + 3 题 prompt 实测 + 声明-实物对账 + 3 个真实案例（`examples/`） |
 
 ## 它和同类有什么不同
 
@@ -104,7 +104,7 @@ git clone https://github.com/zhjx19/data-wrangling && cp -r data-wrangling ~/.cl
 | 定位 | 教"怎么写对代码" | 教"怎么想清楚问题"：问题信号 → 范式定位 |
 | 组织 | 按函数/主题排列 | 按问题信号排列（8 范式 + 决策树） |
 | 思维纠正 | 少见 | §8 专治 Python 式 for 循环/列表/集合思维 |
-| 质量保证 | 部分有测试说明 | 13 例 + 3 题 prompt + 声明-实物对账，四件套任意 locale 可跑 |
+| 质量保证 | 部分有测试说明 | 14 例 + 3 题 prompt + 声明-实物对账，四件套任意 locale 可跑 |
 
 ## 安全边界
 
@@ -119,7 +119,7 @@ git clone https://github.com/zhjx19/data-wrangling && cp -r data-wrangling ~/.cl
 ├── SKILL.md                     定位器：总纲 + 定位表 + 五步法 + 范式速览 + 决策树 + 速查
 ├── references/paradigms.md      8 范式详述（何时用/思维轨迹/案例/注意）+ 综合案例
 ├── examples/                    3 个真实案例：输入 → 定位 → 代码 → 真实输出
-├── scripts/verify_examples.R    13 例范式回归（任意 locale 可跑）
+├── scripts/verify_examples.R    14 例范式回归（任意 locale 可跑）
 ├── scripts/verify_prompts.R     3 题 prompt 实测回归
 ├── scripts/check_consistency.py 57 项声明-实物对账（计数/引用/身份/契约/路由）
 ├── MAINTAINING.md               对标观察清单 + 迭代纪律 + 下一轮入口
@@ -131,7 +131,7 @@ git clone https://github.com/zhjx19/data-wrangling && cp -r data-wrangling ~/.cl
 ## 验证与测试
 
 ```bash
-Rscript --vanilla scripts/verify_examples.R   # === Summary: 13/13 PASS ===
+Rscript --vanilla scripts/verify_examples.R   # === Summary: 14/14 PASS ===
 Rscript --vanilla scripts/verify_prompts.R    # === Summary: 7 check(s), 0 failure(s) ===
 python scripts/check_consistency.py           # 57 项声明-实物对账，全部 PASS
 ```

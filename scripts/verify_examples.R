@@ -1,8 +1,8 @@
 #!/usr/bin/env Rscript
 # verify_examples.R -- one-click regression for the data-wrangling skill.
 #
-# Runs the 8 paradigm code templates from SKILL.md + the capstone case,
-# proving the framework code runs on the current tidyverse version.
+# Runs the paradigm code templates and quick-reference snippets from SKILL.md,
+# plus the capstone case, proving the code runs on the current tidyverse version.
 # Re-run after any change to SKILL.md code blocks.
 #
 # ASCII-only on purpose: this script must run under any locale (a broken
@@ -155,6 +155,28 @@ results = c(
       nrow(out) == 5
     )
     out
+  }),
+
+  ## ---- Quick-reference 6.12: per-column batch (map over columns) -----------
+  run_case("P14 quickref 6.12 per-column batch (map over columns)", {
+    df = tibble(y = c(1, 2, 3, 4), x1 = c(2, 1, 4, 3), x2 = c(4, NA, 2, 1))
+    per = tibble(col = names(df[-1]), mean = map_dbl(df[-1], \(x) mean(x, na.rm = TRUE)))
+    # na.rm matters: x2 holds one NA -> its mean is mean(4, 2, 1) = 7/3, not NA.
+    stopifnot(
+      identical(per$col, c("x1", "x2")), nrow(per) == 2,
+      per$mean[per$col == "x1"] == 2.5,
+      abs(per$mean[per$col == "x2"] - 7 / 3) < 1e-9
+    )
+    fits = tibble(col = names(df[-1]), fit = map(df[-1], \(x) lm(y ~ x, data = df)))
+    # df has no column named x: the formula resolves x from the lambda env, so every
+    # fit regresses on THAT column -- the slopes must differ (0.6 and -1), which is
+    # exactly what proves the per-column semantics the doc claims.
+    slopes = map_dbl(fits$fit, \(m) coef(m)[[2]])
+    stopifnot(
+      nrow(fits) == 2, all(map_lgl(fits$fit, \(m) inherits(m, "lm"))),
+      abs(slopes[1] - 0.6) < 1e-9, abs(slopes[2] + 1) < 1e-9
+    )
+    per
   }),
 
   ## ---- Quick-reference 6.13-6.16: renamed keys / split / slice_max / complete

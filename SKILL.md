@@ -163,7 +163,7 @@ compatibility: claude-code, zcode, opencode, codex
 
 ## 6. 代码范型速查
 
-> 本节是最短可复制写法；每个范式的"何时用 / 思维轨迹 / 案例 / 注意"完整逻辑见 [references/paradigms.md](references/paradigms.md)。范式代码改动后，跑 `scripts/verify_examples.R`（13 例）与 `scripts/verify_prompts.R`（3 题）一键回归，全 PASS 才收工。
+> 本节是最短可复制写法；每个范式的"何时用 / 思维轨迹 / 案例 / 注意"完整逻辑见 [references/paradigms.md](references/paradigms.md)。范式代码改动后，跑 `scripts/verify_examples.R`（14 例）与 `scripts/verify_prompts.R`（3 题）一键回归，全 PASS 才收工。
 
 ### 6.1 分组汇总
 ```r
@@ -249,7 +249,7 @@ df |> left_join(lookup, join_by(closest(value >= threshold)))
 ```r
 # across() 只适合返回兼容向量的汇总；"每列一个复杂对象"用 map 遍历列（列向量 = "一份"数据）：
 tibble(col = names(df[-1]), mean = map_dbl(df[-1], \(x) mean(x, na.rm = TRUE)))
-# 每列各拟合模型：
+# 每列各拟合模型（⚠ df 里不要有名为 x 的列——公式会一直取它，各列结果就一样了）：
 fits = tibble(col = names(df[-1]), fit = map(df[-1], \(x) lm(y ~ x, data = df)))
 # 绘图：对"一份"数据写好画图函数后 map 过去（绘图语法本身不在本技能范围）
 ```
@@ -350,7 +350,7 @@ df |> mutate(rk = row_number(-销量), .by = 门店)   # 强制顺序（并列�
 - [ ] 多表连接前检查了连接关系？（1:1 / 1:N / N:1 / N:N）
 - [ ] 管道串联后结果符合预期形状？
 - [ ] 代码遵守 `=` / `|>` / `\(x)` / `.by` 规范？
-- [ ] 代码模板改动后运行 `scripts/verify_examples.R`（13 例）与 `scripts/verify_prompts.R`（3 题），全 PASS 才收工？
+- [ ] 代码模板改动后运行 `scripts/verify_examples.R`（14 例）与 `scripts/verify_prompts.R`（3 题），全 PASS 才收工？
 - [ ] 文档计数改动后运行 `scripts/check_consistency.py`，57 项声明-实物对账全 PASS 才收工？（它同时管计数、文件引用、技能名一致性、跨技能契约与路由信号）
 - [ ] 若改过技能名或引用，是否同步了 frontmatter `name`、README 标题与姊妹技能的全部引用？（改名属于"全仓一件事"，对账脚本会抓漏网）
 
@@ -365,4 +365,4 @@ df |> mutate(rk = row_number(-销量), .by = 门店)   # 强制顺序（并列�
 
 ## 12. 综合案例与范式详述
 
-8 范式的"何时用 / 思维轨迹 / 案例 / 注意"完整逻辑与多范式串联综合案例（范式1→3→4→6→2），见 [references/paradigms.md](references/paradigms.md)。可运行回归：`scripts/verify_examples.R`（13 例）、`scripts/verify_prompts.R`（3 题 7 检查）、`scripts/check_consistency.py`（57 项声明-实物对账）。人看的逐步案例（输入 → 定位 → 代码 → 真实输出）见 `examples/`；维护约定（对标观察清单、迭代纪律、下一轮入口）见 [MAINTAINING.md](MAINTAINING.md)。
+8 范式的"何时用 / 思维轨迹 / 案例 / 注意"完整逻辑与多范式串联综合案例（范式1→3→4→6→2），见 [references/paradigms.md](references/paradigms.md)。可运行回归：`scripts/verify_examples.R`（14 例）、`scripts/verify_prompts.R`（3 题 7 检查）、`scripts/check_consistency.py`（57 项声明-实物对账）。人看的逐步案例（输入 → 定位 → 代码 → 真实输出）见 `examples/`；维护约定（对标观察清单、迭代纪律、下一轮入口）见 [MAINTAINING.md](MAINTAINING.md)。
