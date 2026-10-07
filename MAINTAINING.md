@@ -69,6 +69,7 @@ python scripts/check_consistency.py            # 声明-实物对账（自报总
 | `scripts/verify_prompts.R` | 3 条行为 prompt 的端到端输出断言 | 改 `test-prompts.json` 或范式后 |
 | `scripts/check_consistency.py` | 计数 / 文件引用 / **身份一致性** / 跨技能契约 / 路由信号 / 自报总数 / **外链身份 / 徽章计数** | 任何文档改动、任何改名、任何外链或徽章改动 |
 | `examples/` | 给人看的 before/after 证据（输出取自 `verify_prompts.R` 同一夹具） | 与 `verify_prompts.R` 同源，**改其一必改另一** |
+| `assets/make_figures.py` | 决策树图/GIF 与 `SKILL.md` §5 §3 一致（**解析生成**，不是手抄；解析不到 6 问/19 分支/5 步即报错） | 改 `SKILL.md` §5 §3 后（需 matplotlib + Pillow：仓库里唯一带依赖的脚本） |
 
 ### 对账脚本的判据（已负向实测）
 
@@ -96,3 +97,5 @@ python scripts/check_consistency.py            # 声明-实物对账（自报总
 - 不替**未授权**的技能做判断：`learning-method` 那次改动是拿到该作者明确授权后才做的。没有授权的重述，登记进 `KNOWN_OVERLAPS` 并写明理由，不擅自改别人的文档。
 - 不给 `examples/` 加第二套自动断言——会造出双份真相，与"单一事实源"冲突。
 - 不引入任何新依赖：四个脚本刻意保持零依赖、任意 locale 可跑。
+- **不做 `.claude-plugin/marketplace.json`**（出生证检查会因此常驻一条 WARN）：本技能以 SKILL.md 形态分发，不进 plugin 市场；硬造一个 manifest 只会让"看起来能上架"变成误导。
+- **不提供 `.tape`（VHS 录制脚本）**（另一条常驻 WARN）：本机没有 vhs / ffmpeg，且首屏动图**不是录屏**，而是 `assets/make_figures.py` 从 `SKILL.md` §5 解析生成的示意图。可复现性由那个脚本负责（改文档重跑即可重画）；补一个跑不起来的 `.tape` 只会制造"看起来可复现"的假象。

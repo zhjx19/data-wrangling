@@ -8,7 +8,7 @@
 
 [![Agent Skills](https://img.shields.io/badge/Agent_Skills-data--wrangling-blueviolet)](SKILL.md)
 [![R](https://img.shields.io/badge/R-tidyverse-blue)](https://www.tidyverse.org/)
-[![regression](https://img.shields.io/badge/regression-14%2F14%20%C2%B7%207%2F7%20%C2%B7%2059%2F59%20PASS-brightgreen)](scripts/)
+[![regression](https://img.shields.io/badge/regression-14%2F14%20%C2%B7%207%2F7%20%C2%B7%2062%2F62%20PASS-brightgreen)](scripts/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![skills.sh](https://skills.sh/b/zhjx19/data-wrangling)](https://www.skills.sh/skills/zhjx19/data-wrangling)
 
@@ -17,6 +17,18 @@
 [看效果](#效果示例) · [真实案例](#真实案例) · [安装](#快速开始) · [触发方式](#触发方式) · [它和同类有什么不同](#它和同类有什么不同) · [验证](#验证与测试)
 
 </div>
+
+---
+
+## 先看它怎么定位
+
+拿到任何表格数据问题，依次问 6 个问题就能落到范式（下面是**脚本生成的定位过程示意，不是录屏**）：
+
+![数据问题 → 范式定位：6 问决策树（脚本生成示意）](assets/demo.gif)
+
+静态大图（可打印 / 放大）：[assets/decision-tree.png](assets/decision-tree.png) ·
+矢量版 [assets/decision-tree.svg](assets/decision-tree.svg)。两张图都由 `assets/make_figures.py`
+从 `SKILL.md` §5 决策树**解析生成**——文档改了，图跟着变；解析不到 6 问 / 19 分支 / 5 步就直接报错。
 
 ---
 
@@ -121,11 +133,12 @@ git clone https://github.com/zhjx19/data-wrangling && cp -r data-wrangling ~/.cl
 ├── examples/                    3 个真实案例：输入 → 定位 → 代码 → 真实输出
 ├── scripts/verify_examples.R    14 例范式回归（任意 locale 可跑）
 ├── scripts/verify_prompts.R     3 题 prompt 实测回归
-├── scripts/check_consistency.py 59 项声明-实物对账（计数/引用/身份/契约/路由/外链）
+├── scripts/check_consistency.py 62 项声明-实物对账（计数/引用/身份/契约/路由/外链）
 ├── MAINTAINING.md               对标观察清单 + 迭代纪律 + 下一轮入口
 ├── CHANGELOG.md                 版本史
 ├── test-prompts.json            3 条行为测试题
-└── assets/data-thinking-2.0.png 数据思维 2.0 总纲思维导图
+└── assets/                      图资产：data-thinking-2.0.png（总纲思维导图）、
+                                 decision-tree.png/svg + demo.gif（决策树，由 make_figures.py 解析 SKILL.md §5 生成）
 ```
 
 ## 验证与测试
@@ -133,7 +146,7 @@ git clone https://github.com/zhjx19/data-wrangling && cp -r data-wrangling ~/.cl
 ```bash
 Rscript --vanilla scripts/verify_examples.R   # === Summary: 14/14 PASS ===
 Rscript --vanilla scripts/verify_prompts.R    # === Summary: 7 check(s), 0 failure(s) ===
-python scripts/check_consistency.py           # 59 项声明-实物对账，全部 PASS
+python scripts/check_consistency.py           # 62 项声明-实物对账，全部 PASS
 ```
 
 第三条不只数数：它同时验证**技能名一致性**（目录名 = frontmatter `name` = README 标题）、**跨技能契约**（`related-skills` 双向回指）、**路由信号**（姊妹技能是否无授权占用本技能的触发短语）和**文档自报的检查总数**。凡是计数、引用或改名类改动，它全绿才算改完——维护约定见 [MAINTAINING.md](MAINTAINING.md)。

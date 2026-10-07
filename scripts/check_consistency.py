@@ -131,6 +131,8 @@ check("README: anti-pattern claim present and == {}".format(n_ap),
 
 # 5. referenced files exist ----------------------------------------------------
 for f in ["references/paradigms.md", "assets/data-thinking-2.0.png",
+          "assets/decision-tree.png", "assets/decision-tree.svg",
+          "assets/demo.gif",
           "scripts/verify_examples.R", "scripts/verify_prompts.R",
           "scripts/check_consistency.py",
           "test-prompts.json", "LICENSE", "CHANGELOG.md", "README.md",
