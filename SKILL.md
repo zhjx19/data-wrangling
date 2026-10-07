@@ -351,7 +351,7 @@ df |> mutate(rk = row_number(-销量), .by = 门店)   # 强制顺序（并列�
 - [ ] 管道串联后结果符合预期形状？
 - [ ] 代码遵守 `=` / `|>` / `\(x)` / `.by` 规范？
 - [ ] 代码模板改动后运行 `scripts/verify_examples.R`（14 例）与 `scripts/verify_prompts.R`（3 题），全 PASS 才收工？
-- [ ] 文档计数改动后运行 `scripts/check_consistency.py`，57 项声明-实物对账全 PASS 才收工？（它同时管计数、文件引用、技能名一致性、跨技能契约与路由信号）
+- [ ] 文档计数改动后运行 `scripts/check_consistency.py`，59 项声明-实物对账全 PASS 才收工？（它同时管计数、文件引用、技能名一致性、跨技能契约与路由信号）
 - [ ] 若改过技能名或引用，是否同步了 frontmatter `name`、README 标题与姊妹技能的全部引用？（改名属于"全仓一件事"，对账脚本会抓漏网）
 
 ## 11. 思维总结
@@ -365,4 +365,4 @@ df |> mutate(rk = row_number(-销量), .by = 门店)   # 强制顺序（并列�
 
 ## 12. 综合案例与范式详述
 
-8 范式的"何时用 / 思维轨迹 / 案例 / 注意"完整逻辑与多范式串联综合案例（范式1→3→4→6→2），见 [references/paradigms.md](references/paradigms.md)。可运行回归：`scripts/verify_examples.R`（14 例）、`scripts/verify_prompts.R`（3 题 7 检查）、`scripts/check_consistency.py`（57 项声明-实物对账）。人看的逐步案例（输入 → 定位 → 代码 → 真实输出）见 `examples/`；维护约定（对标观察清单、迭代纪律、下一轮入口）见 [MAINTAINING.md](MAINTAINING.md)。
+8 范式的"何时用 / 思维轨迹 / 案例 / 注意"完整逻辑与多范式串联综合案例（范式1→3→4→6→2），见 [references/paradigms.md](references/paradigms.md)。可运行回归：`scripts/verify_examples.R`（14 例）、`scripts/verify_prompts.R`（3 题 7 检查）、`scripts/check_consistency.py`（59 项声明-实物对账）。人看的逐步案例（输入 → 定位 → 代码 → 真实输出）见 `examples/`；维护约定（对标观察清单、迭代纪律、下一轮入口）见 [MAINTAINING.md](MAINTAINING.md)。

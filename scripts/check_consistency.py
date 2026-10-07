@@ -13,6 +13,9 @@
 #   - cross-skill contracts: related-skills resolve and point back
 #   - routing: no sibling claims our trigger phrases without delegating to us
 #   - narrative artifacts (examples/) and the declared check count itself
+#   - external claims: identity-bearing URLs and the README regression badge
+#     (both rotted while nothing read them: a skills.sh path kept the old slug
+#     and 404'd, and the badge still said 28/28 after the checker grew to 57)
 #
 # Python on purpose: unicode-safe under any locale (the R sibling scripts hit
 # parser/locale landmines documented in their headers). Run from anywhere:
@@ -43,6 +46,23 @@ def check(name, cond, detail=""):
 def read_doc(p):
     with open(os.path.join(ROOT, p), encoding="utf-8") as f:
         return f.read()
+
+
+def badge_counts(text):
+    """[(n, n), ...] from the shields.io regression badge, or None if absent.
+
+    The badge encodes its three counts as '14%2F14%20%C2%B7%207%2F7%20...', so
+    decode %2F to '/' and keep every 'N/N' piece.
+    """
+    m = re.search(r"regression-([^\s)\"'>]+)", text)
+    if not m:
+        return None
+    out = []
+    for part in m.group(1).replace("%2F", "/").split("%20"):
+        mm = re.match(r"(\d+)/(\d+)$", part)
+        if mm:
+            out.append((int(mm.group(1)), int(mm.group(2))))
+    return out
 
 
 # 1. actual counts from the two regression scripts ---------------------------
@@ -220,11 +240,45 @@ n_case_files = len([f for f in os.listdir(os.path.join(ROOT, "examples"))
 check("examples/ holds {} case files".format(N_EXAMPLES),
       n_case_files == N_EXAMPLES, "found {}".format(n_case_files))
 
+# 13. written-in external claims ----------------------------------------------
+# A claim no script reads is a claim that rots. Two of them did, in the same
+# week: the distribution links (a skills.sh path kept the pre-rename slug and
+# 404'd) and the README regression badge (still 28/28 long after the checker
+# grew to 57). Bind both to the files that actually know the truth.
+SELF_COUNT_DOCS = ["README.md", "SKILL.md", "README.en.md"]
+
+# (a) Links that carry our identity must carry the CURRENT slug. Peers' links are
+#     left alone -- only URLs naming us (zhjx19) are policed, which is exactly the
+#     class that broke.
+all_urls = []
+for d in ["SKILL.md", "README.md", "README.en.md", "MAINTAINING.md"]:
+    all_urls += re.findall(r"""https?://[^\s)\]"'>]+""", read_doc(d))
+bad_urls = sorted({u for u in all_urls
+                   if ("zhjx19" in u and "data-wrangling" not in u)
+                   or LEGACY_NAME in u})
+check("external links: identity-bearing URLs carry the current slug",
+      not bad_urls, "offending: " + ", ".join(bad_urls))
+
+# (b) The badge hardcodes three counts: the two measured above plus the
+#     self-count this file is about to require. (+1 = this check itself.)
+expected_self = total + 1 + len(SELF_COUNT_DOCS)
+badge_bad = []
+for d in ["README.md", "README.en.md"]:
+    nums = badge_counts(read_doc(d))
+    want = [(n_cases, n_cases), (n_checks, n_checks),
+            (expected_self, expected_self)]
+    if nums is None:
+        badge_bad.append("{}: no regression badge".format(d))
+    elif nums != want:
+        badge_bad.append("{}: {} != {}".format(d, nums, want))
+check("external claims: regression badge counts match the scripts",
+      not badge_bad, "; ".join(badge_bad))
+
 # 12. the declared check count itself ----------------------------------------
+# SELF_COUNT_DOCS is defined in section 13 (the badge check needs it first).
 # The self-count checks below are themselves counted, so the number the docs
 # must declare is known in advance: total so far + one per doc examined.
 # Deriving it from the same list keeps the counter and the claim in lockstep.
-SELF_COUNT_DOCS = ["README.md", "SKILL.md", "README.en.md"]
 REPORTED = total + len(SELF_COUNT_DOCS)
 for d in SELF_COUNT_DOCS:
     dt = read_doc(d)
