@@ -10,7 +10,7 @@
 [![R](https://img.shields.io/badge/R-tidyverse-blue)](https://www.tidyverse.org/)
 [![regression](https://img.shields.io/badge/regression-13%2F13%20%C2%B7%207%2F7%20%C2%B7%2028%2F28%20PASS-brightgreen)](scripts/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![skills.sh](https://skills.sh/b/zhjx19/data-wrangling)](https://skills.sh/zhjx19/data-wrangling)
+[![skills.sh](https://skills.sh/b/zhjx19/data-wrangling)](https://www.skills.sh/skills/zhjx19/data-wrangling)
 
 **Not another tidyverse function reference — a problem→paradigm locator: for any tabular data problem, reach the right paradigm in 30 seconds.**
 

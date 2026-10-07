@@ -35,7 +35,7 @@ python scripts/check_consistency.py            # 声明-实物对账（自报总
 | 同行 | 链接 | 盯什么 | 什么信号触发行动 |
 |---|---|---|---|
 | Tessl Registry | https://tessl.io/registry/skills | 它的 "agent success vs baseline" 量化信任是否成为技能市场默认展示 | 若成为默认 → 把本技能的回归升级成对外可跑的评分卡，而不只是仓库内脚本 |
-| skills.sh 条目 | https://skills.sh/zhjx19/data-wrangling | 条目是否随仓库改名生效、是否进入 curated 分类 | 条目缺失或指向旧 slug → 修 README 徽章与安装命令 |
+| skills.sh 条目 | https://www.skills.sh/skills/zhjx19/data-wrangling | 条目是否随仓库改名生效、是否进入 curated 分类 | 条目缺失或指向旧 slug → 修 README 徽章与安装命令 |
 | tidy-r-skill | https://github.com/statzhero/tidy-r-skill | 是否补上"问题→范式定位"层（那是本技能的差异点） | 若它也加定位层 → 差异化回到"回归自证"上 |
 | writing-tidyverse-r | https://lobehub.com/skills/jeremy-allen-claude-skills-writing-tidyverse-r | 多平台目录曝光的具体做法 | 若它靠多平台目录获得曝光 → 补 ClawHub/Tessl 投放 |
 | Claude R Tidyverse Expert | https://gist.github.com/sj-io/3828d64d0969f2a0f05297e59e6c15ad | 第三方盘点文的背书渠道（R Works 那类文章） | 出现新的 R 技能盘点文 → 争取被收录 |
