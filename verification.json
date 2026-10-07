@@ -1,13 +1,14 @@
 {
   "skill": "data-wrangling",
   "version": "1.5.0",
-  "generated_at": "2026-10-07T06:27:40Z",
+  "generated_at": "2026-10-07T06:44:29Z",
   "verdict": "PASS",
-  "gates_passed": 3,
-  "gates_total": 3,
+  "gates_passed": 4,
+  "gates_total": 4,
   "regression_cases": 15,
   "prompt_checks": 7,
-  "consistency_checks": 67,
+  "snippet_cases": 47,
+  "consistency_checks": 70,
   "gates": [
     {
       "name": "paradigm cases",
@@ -24,12 +25,19 @@
       "ok": true
     },
     {
+      "name": "snippet census",
+      "command": "Rscript --vanilla scripts/verify_snippets.R",
+      "passed": 47,
+      "total": 47,
+      "ok": true
+    },
+    {
       "name": "doc-vs-reality",
       "command": "python scripts/check_consistency.py",
-      "passed": 67,
-      "total": 67,
+      "passed": 70,
+      "total": 70,
       "ok": true
     }
   ],
-  "scope_note": "In-repo gates only. The external birth checklist and the 47-case snippet census are not run here."
+  "scope_note": "In-repo gates only: the external birth checklist is not run here."
 }

@@ -50,7 +50,7 @@ def run(cmd):
 
 
 def gate_examples():
-    rc, out = run(["Rscript", "--vanilla", "scripts/verify_examples.R"])
+    rc, out = run([RSCRIPT, "--vanilla", "scripts/verify_examples.R"])
     m = re.search(r"Summary: (\d+)/(\d+) PASS", out)
     got, total = (int(m.group(1)), int(m.group(2))) if m else (0, 0)
     return {"name": "paradigm cases", "command": "Rscript --vanilla scripts/verify_examples.R",
@@ -58,7 +58,7 @@ def gate_examples():
 
 
 def gate_prompts():
-    rc, out = run(["Rscript", "--vanilla", "scripts/verify_prompts.R"])
+    rc, out = run([RSCRIPT, "--vanilla", "scripts/verify_prompts.R"])
     m = re.search(r"Summary: (\d+) check\(s\), (\d+) failure", out)
     total, bad = (int(m.group(1)), int(m.group(2))) if m else (0, 1)
     return {"name": "prompt tests", "command": "Rscript --vanilla scripts/verify_prompts.R",
@@ -73,8 +73,17 @@ def gate_consistency():
             "passed": total - bad, "total": total, "ok": rc == 0 and bad == 0 and total > 0}
 
 
+def gate_snippets():
+    """The full census: every ```r block in the docs, as 47 executable cases."""
+    rc, out = run([RSCRIPT, "--vanilla", "scripts/verify_snippets.R"])
+    m = re.search(r"Summary: (\d+)/(\d+) PASS", out)
+    got, total = (int(m.group(1)), int(m.group(2))) if m else (0, 0)
+    return {"name": "snippet census", "command": "Rscript --vanilla scripts/verify_snippets.R",
+            "passed": got, "total": total, "ok": rc == 0 and got == total and total > 0}
+
+
 def main():
-    gates = [gate_examples(), gate_prompts(), gate_consistency()]
+    gates = [gate_examples(), gate_prompts(), gate_snippets(), gate_consistency()]
     green = sum(1 for g in gates if g["ok"])
     verdict = "PASS" if green == len(gates) else "FAIL"
     card = {
@@ -89,10 +98,11 @@ def main():
         # them without parsing prose.
         "regression_cases": gates[0]["passed"],
         "prompt_checks": gates[1]["passed"],
-        "consistency_checks": gates[2]["passed"],
+        "snippet_cases": gates[2]["passed"],
+        "consistency_checks": gates[3]["passed"],
         "gates": gates,
-        "scope_note": ("In-repo gates only. The external birth checklist and the "
-                       "47-case snippet census are not run here."),
+        "scope_note": ("In-repo gates only: the external birth checklist is not "
+                       "run here."),
     }
 
     print("\n  data-wrangling · verification scorecard\n")

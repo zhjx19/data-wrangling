@@ -75,6 +75,9 @@ with open(os.path.join(ROOT, "scripts/verify_prompts.R"), encoding="utf-8") as f
     pr = f.read()
 n_cases = len(re.findall(r"^\s*run_case\(", ex, re.M))
 n_checks = len(re.findall(r'check\("', pr))
+with open(os.path.join(ROOT, "scripts/snippets-cases.R"), encoding="utf-8") as f:
+    sn = f.read()
+n_snippets = len(re.findall(r"^\s*run_case\(", sn, re.M))
 
 # 2. claimed counts in docs (CHANGELOG excluded: historical record) -----------
 docs = ["SKILL.md", "references/paradigms.md", "README.md"]
@@ -137,6 +140,7 @@ for f in ["references/paradigms.md", "assets/data-thinking-2.0.png",
           "assets/decision-tree.png", "assets/decision-tree.svg",
           "assets/demo.gif",
           "scripts/scorecard.py", "verification.json",
+          "scripts/verify_snippets.R", "scripts/snippets-cases.R",
           "scripts/verify_examples.R", "scripts/verify_prompts.R",
           "scripts/check_consistency.py",
           "test-prompts.json", "LICENSE", "CHANGELOG.md", "README.md",
@@ -200,6 +204,7 @@ LEGACY_NAME = "tidy-data"
 RENAME_MARKERS = ("原名", "旧名", "formerly", "originally", "renamed from")
 for d in ["SKILL.md", "references/paradigms.md", "README.md", "README.en.md",
           "scripts/verify_examples.R", "scripts/verify_prompts.R",
+          "scripts/verify_snippets.R",
           "MAINTAINING.md", "examples/README.md"]:
     bad = [ln.strip() for ln in read_doc(d).splitlines()
            if LEGACY_NAME in ln
@@ -317,7 +322,7 @@ try:
 except Exception as _e:
     _card, _card_err = None, str(_e)
 _want_card = {"regression_cases": n_cases, "prompt_checks": n_checks,
-              "consistency_checks": EXPECTED_SELF}
+              "snippet_cases": n_snippets, "consistency_checks": EXPECTED_SELF}
 if _card is None:
     _card_bad = "unreadable or missing: " + _card_err
 else:

@@ -12,7 +12,7 @@ Rscript --vanilla scripts/verify_prompts.R     # 3 题 prompt 端到端断言
 python scripts/check_consistency.py            # 声明-实物对账（自报总数以运行输出为准）
 ```
 
-> 想一次看全：`python scripts/scorecard.py`（跑上面三条并给出一个结论）；加 `--write` 会刷新
+> 想一次看全：`python scripts/scorecard.py`（跑上面三条**加 47 个代码块的普查**并给出一个结论）；加 `--write` 会刷新
 > `verification.json`。**改了任何计数，产物必须跟着刷**，否则对账脚本会红灯。
 
 第三条不只是数数——它同时管**身份一致性、跨技能契约、路由信号**（见第五节）。**任何文档改动或改名改动，都必须让它全绿。**
@@ -21,6 +21,9 @@ python scripts/check_consistency.py            # 声明-实物对账（自报总
 
 - **改名 = 全仓一件事。** 技能 id 就是技能目录名，所以改名必须同步：frontmatter `name`、README/README.en 标题、姊妹技能的 `related-skills` 与正文引用、`scripts/*.R` 头注释，并在 CHANGELOG 留一条"为什么改"。漏哪一处，`check_consistency.py` 会红灯。
 - **计数与引用改了就跑对账。** 文档里的数字必须等于实物的实际数量；这一条是历史红队最爱抓的漂移点。
+- **「N 例」是保留字。** 它只指 `verify_examples.R` 的**回归例数**（当前 15）；说别的数量一律用「N 个」
+  （如「47 个代码块」）。对账脚本会把任何 `(\d+) 例` 当回归例数来核——这条约定是为了让机器能读得准，
+  不是为了洁癖（作者本人已在这上面栽过两次）。
 - **回刀不用 `git reset --hard`。** 优先 `git revert` 或追加一个修正提交，保留可审计的 diff。
 
 ### 3. 发版叙事
@@ -73,7 +76,8 @@ python scripts/check_consistency.py            # 声明-实物对账（自报总
 | `scripts/check_consistency.py` | 计数 / 文件引用 / **身份一致性** / 跨技能契约 / 路由信号 / 自报总数 / **外链身份 / 徽章计数** | 任何文档改动、任何改名、任何外链或徽章改动 |
 | `examples/` | 给人看的 before/after 证据（输出取自 `verify_prompts.R` 同一夹具） | 与 `verify_prompts.R` 同源，**改其一必改另一** |
 | `assets/make_figures.py` | 决策树图/GIF 与 `SKILL.md` §5 §3 一致（**解析生成**，不是手抄；解析不到 6 问/19 分支/5 步即报错） | 改 `SKILL.md` §5 §3 后（需 matplotlib + Pillow：仓库里唯一带依赖的脚本） |
-| `scripts/scorecard.py` | 一条命令跑完三件套并落成 `verification.json`（对外可消费的信任产物） | 任何计数变化后（用 `--write` 刷新产物，否则对账红灯） |
+| `scripts/verify_snippets.R` | **文档里每段代码都真跑过**（47 个代码块的普查；用例表 `snippets-cases.R` 保留文档的中文列名，启动器 ASCII + 显式 UTF-8） | 改任何文档代码块后（比 `verify_examples.R` 更全，也更慢） |
+| `scripts/scorecard.py` | 一条命令跑完四道闸门并落成 `verification.json`（对外可消费的信任产物） | 任何计数变化后（用 `--write` 刷新产物，否则对账红灯） |
 
 ### 对账脚本的判据（已负向实测）
 

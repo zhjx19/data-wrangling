@@ -8,7 +8,7 @@
 
 [![Agent Skills](https://img.shields.io/badge/Agent_Skills-data--wrangling-blueviolet)](SKILL.md)
 [![R](https://img.shields.io/badge/R-tidyverse-blue)](https://www.tidyverse.org/)
-[![regression](https://img.shields.io/badge/regression-15%2F15%20%C2%B7%207%2F7%20%C2%B7%2067%2F67%20PASS-brightgreen)](scripts/)
+[![regression](https://img.shields.io/badge/regression-15%2F15%20%C2%B7%207%2F7%20%C2%B7%2070%2F70%20PASS-brightgreen)](scripts/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![skills.sh](https://skills.sh/b/zhjx19/data-wrangling)](https://www.skills.sh/skills/zhjx19/data-wrangling)
 
@@ -137,7 +137,9 @@ git clone https://github.com/zhjx19/data-wrangling && cp -r data-wrangling ~/.cl
 ├── examples/                    3 个真实案例：输入 → 定位 → 代码 → 真实输出
 ├── scripts/verify_examples.R    15 例范式回归（任意 locale 可跑）
 ├── scripts/verify_prompts.R     3 题 prompt 实测回归
-├── scripts/check_consistency.py 67 项声明-实物对账（计数/引用/身份/契约/路由/外链/资产）
+├── scripts/check_consistency.py 70 项声明-实物对账（计数/引用/身份/契约/路由/外链/资产）
+├── scripts/verify_snippets.R    47 个代码块的实跑普查（ASCII 启动器）
+├── scripts/snippets-cases.R     上述普查的用例表（UTF-8，保文档里的中文列名）
 ├── scripts/scorecard.py         一键跑全部闸门 → 机器可读的 verification.json
 ├── verification.json            评分卡产物：计数 + 结论 + 时间戳（供外部消费）
 ├── VERIFICATION.md              验证记录：4 处翻车（含 2 处静默错）+ 路由评测
@@ -153,7 +155,7 @@ git clone https://github.com/zhjx19/data-wrangling && cp -r data-wrangling ~/.cl
 ```bash
 Rscript --vanilla scripts/verify_examples.R   # === Summary: 15/15 PASS ===
 Rscript --vanilla scripts/verify_prompts.R    # === Summary: 7 check(s), 0 failure(s) ===
-python scripts/check_consistency.py           # 67 项声明-实物对账，全部 PASS
+python scripts/check_consistency.py           # 70 项声明-实物对账，全部 PASS
 ```
 
 **一条命令拿评分卡**（跑上面三件套，并把结果落成机器可读的信任产物）：
@@ -167,9 +169,10 @@ python scripts/scorecard.py --write     # 打印评分卡 + 刷新 verification.
 
   paradigm cases      15/15   PASS
   prompt tests         7/7    PASS
-  doc-vs-reality      67/67   PASS
+  snippet census      47/47   PASS
+  doc-vs-reality      70/70   PASS
 
-  verdict: PASS (3/3 gates green)   version: 1.5.0
+  verdict: PASS (4/4 gates green)   version: 1.5.0
 ```
 
 `verification.json` 是给外部消费的（技能市场 / agent 可直接读计数与结论，不必解析散文），
