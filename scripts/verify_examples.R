@@ -233,6 +233,53 @@ results = c(
       nrow(out) == 6
     )
     out
+  }),
+
+  ## ---- Quick-reference 6.7b: pivot_wider's two traps ------------------------
+  # Fixtures are ASCII on purpose (this file must parse under any locale); the
+  # doc's contact example uses Chinese labels -- same structure, same mechanics.
+  run_case("P15 pivot_wider two traps + within-group id", {
+    df = tibble(x = 1:6, y = c("A", "A", "B", "B", "C", "C"),
+                z = c(2.13, 3.65, 1.88, 2.30, 6.55, 4.21))
+
+    # trap 1: keeping the row-unique id column (x) -> no compression, NAs filled
+    wide1 = df |> pivot_wider(names_from = y, values_from = z)
+    stopifnot(nrow(wide1) == 6, is.na(wide1$A[3]), is.na(wide1$B[1]))
+
+    # trap 2: no id at all -> values are not uniquely identified -> list-columns
+    wide2 = df[-1] |> pivot_wider(names_from = y, values_from = z)
+    stopifnot(nrow(wide2) == 1, is.list(wide2$A),
+              all(map_int(wide2$A, length) == 2))
+
+    # fix: build a within-group id first, then widen -> the shape the user wanted
+    wide3 = df[-1] |>
+      mutate(n = row_number(), .by = y) |>
+      pivot_wider(names_from = y, values_from = z)
+    stopifnot(
+      nrow(wide3) == 2, identical(names(wide3), c("n", "A", "B", "C")),
+      wide3$A[1] == 2.13, wide3$A[2] == 3.65, wide3$C[2] == 4.21
+    )
+
+    # equivalent: keep x and pass id_cols explicitly (x is dropped from result)
+    wide4 = df |> mutate(n = row_number(), .by = y) |>
+      pivot_wider(names_from = y, values_from = z, id_cols = n)
+    stopifnot(nrow(wide4) == 2, identical(names(wide4), c("n", "A", "B", "C")))
+
+    # special case: irregular contact list -> id from where the key field reappears
+    contacts = tribble(
+      ~field, ~value,
+      "name", "p1", "company", "c1",
+      "name", "p2", "company", "c2", "email", "e2@x.com",
+      "name", "p3")
+    wide5 = contacts |> mutate(ID = cumsum(field == "name")) |>
+      pivot_wider(names_from = field, values_from = value)
+    stopifnot(
+      nrow(wide5) == 3,
+      identical(names(wide5), c("ID", "name", "company", "email")),
+      wide5$name == c("p1", "p2", "p3"), is.na(wide5$email[3])
+    )
+
+    wide3
   })
 )
 

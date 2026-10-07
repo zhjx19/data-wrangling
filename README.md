@@ -8,7 +8,7 @@
 
 [![Agent Skills](https://img.shields.io/badge/Agent_Skills-data--wrangling-blueviolet)](SKILL.md)
 [![R](https://img.shields.io/badge/R-tidyverse-blue)](https://www.tidyverse.org/)
-[![regression](https://img.shields.io/badge/regression-14%2F14%20%C2%B7%207%2F7%20%C2%B7%2062%2F62%20PASS-brightgreen)](scripts/)
+[![regression](https://img.shields.io/badge/regression-15%2F15%20%C2%B7%207%2F7%20%C2%B7%2063%2F63%20PASS-brightgreen)](scripts/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![skills.sh](https://skills.sh/b/zhjx19/data-wrangling)](https://www.skills.sh/skills/zhjx19/data-wrangling)
 
@@ -107,7 +107,7 @@ git clone https://github.com/zhjx19/data-wrangling && cp -r data-wrangling ~/.cl
 | 范式思维教学 | 8 范式详述：何时用 / 思维轨迹 / 案例 / 注意（references/paradigms.md） |
 | 可复制代码 | 17 段最短范型速查（SKILL.md §6） |
 | 思维纠正 | 反模式黑名单 12 条 + 破除外来习惯 6 问 |
-| 质量保证 | 四件套：14 例范式回归 + 3 题 prompt 实测 + 声明-实物对账 + 3 个真实案例（`examples/`） |
+| 质量保证 | 四件套：15 例范式回归 + 3 题 prompt 实测 + 声明-实物对账 + 3 个真实案例（`examples/`） |
 
 ## 它和同类有什么不同
 
@@ -116,7 +116,7 @@ git clone https://github.com/zhjx19/data-wrangling && cp -r data-wrangling ~/.cl
 | 定位 | 教"怎么写对代码" | 教"怎么想清楚问题"：问题信号 → 范式定位 |
 | 组织 | 按函数/主题排列 | 按问题信号排列（8 范式 + 决策树） |
 | 思维纠正 | 少见 | §8 专治 Python 式 for 循环/列表/集合思维 |
-| 质量保证 | 部分有测试说明 | 14 例 + 3 题 prompt + 声明-实物对账，四件套任意 locale 可跑 |
+| 质量保证 | 部分有测试说明 | 15 例 + 3 题 prompt + 声明-实物对账，四件套任意 locale 可跑 |
 
 ## 安全边界
 
@@ -131,9 +131,10 @@ git clone https://github.com/zhjx19/data-wrangling && cp -r data-wrangling ~/.cl
 ├── SKILL.md                     定位器：总纲 + 定位表 + 五步法 + 范式速览 + 决策树 + 速查
 ├── references/paradigms.md      8 范式详述（何时用/思维轨迹/案例/注意）+ 综合案例
 ├── examples/                    3 个真实案例：输入 → 定位 → 代码 → 真实输出
-├── scripts/verify_examples.R    14 例范式回归（任意 locale 可跑）
+├── scripts/verify_examples.R    15 例范式回归（任意 locale 可跑）
 ├── scripts/verify_prompts.R     3 题 prompt 实测回归
-├── scripts/check_consistency.py 62 项声明-实物对账（计数/引用/身份/契约/路由/外链）
+├── scripts/check_consistency.py 63 项声明-实物对账（计数/引用/身份/契约/路由/外链）
+├── VERIFICATION.md              验证记录：4 处翻车（含 2 处静默错）+ 路由评测
 ├── MAINTAINING.md               对标观察清单 + 迭代纪律 + 下一轮入口
 ├── CHANGELOG.md                 版本史
 ├── test-prompts.json            3 条行为测试题
@@ -144,12 +145,15 @@ git clone https://github.com/zhjx19/data-wrangling && cp -r data-wrangling ~/.cl
 ## 验证与测试
 
 ```bash
-Rscript --vanilla scripts/verify_examples.R   # === Summary: 14/14 PASS ===
+Rscript --vanilla scripts/verify_examples.R   # === Summary: 15/15 PASS ===
 Rscript --vanilla scripts/verify_prompts.R    # === Summary: 7 check(s), 0 failure(s) ===
-python scripts/check_consistency.py           # 62 项声明-实物对账，全部 PASS
+python scripts/check_consistency.py           # 63 项声明-实物对账，全部 PASS
 ```
 
 第三条不只数数：它同时验证**技能名一致性**（目录名 = frontmatter `name` = README 标题）、**跨技能契约**（`related-skills` 双向回指）、**路由信号**（姊妹技能是否无授权占用本技能的触发短语）和**文档自报的检查总数**。凡是计数、引用或改名类改动，它全绿才算改完——维护约定见 [MAINTAINING.md](MAINTAINING.md)。
+
+**它拦下过什么、会被谁选中**：4 处真实翻车（2 处响错 + 2 处静默错，附真报错与真错值）+ 两轮路由评测（11 条用户原话，其中 1 处暴露出描述边界的漏洞），见 [VERIFICATION.md](VERIFICATION.md)。该评测还带出一条修正：frontmatter 的边界与 README 的安全边界原本口径不一致，已对齐。
+
 
 行为测试见 [test-prompts.json](test-prompts.json)：含一条"我想用 for 循环逐行算"的对抗性
 prompt——合格表现是破除循环思维、改用 `accumulate` 向量化，而不是顺着写循环。

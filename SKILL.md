@@ -5,7 +5,9 @@ description: >-
   Use when 面对复杂的结构化表格数据处理问题，需要用 R tidyverse（dplyr/tidyr/purrr/slider）解决。
   适合需要五步法分解任务、重塑整洁数据（pivot_longer/pivot_wider）、管道（|>）、分组计算（.by）、
   跨列批量（across）、累计迭代（accumulate）、滑窗（slide）、嵌套批量（nest+map）、非等连接（join_by）
-  等场景；也适用于把"Python 列表/循环式思维"改写为管道+数据框思维。不适用于 ggplot2 绘图或非表格数据。
+  等场景；也适用于把"Python 列表/循环式思维"改写为管道+数据框思维。不适用于 ggplot2 绘图、非表格数据，
+  也不适用于泛泛的"处理一下数据 / 做点统计 / 建个模"——那类请求先定任务类型
+  （清洗走 data-cleaning、探索与检验走 eda / statistical-analysis、正式建模走 ml-mlr3）。
   Triggers: 数据思维/tidyverse 怎么写/宽表转长表/长表转宽表/分组计算/每组汇总/环比同比/累计迭代/滑窗滚动/非等连接/嵌套批量/不要用 for 循环.
 related-skills:
   - data-cleaning
@@ -163,7 +165,7 @@ compatibility: claude-code, zcode, opencode, codex
 
 ## 6. 代码范型速查
 
-> 本节是最短可复制写法；每个范式的"何时用 / 思维轨迹 / 案例 / 注意"完整逻辑见 [references/paradigms.md](references/paradigms.md)。范式代码改动后，跑 `scripts/verify_examples.R`（14 例）与 `scripts/verify_prompts.R`（3 题）一键回归，全 PASS 才收工。
+> 本节是最短可复制写法；每个范式的"何时用 / 思维轨迹 / 案例 / 注意"完整逻辑见 [references/paradigms.md](references/paradigms.md)。范式代码改动后，跑 `scripts/verify_examples.R`（15 例）与 `scripts/verify_prompts.R`（3 题）一键回归，全 PASS 才收工。
 
 ### 6.1 分组汇总
 ```r
@@ -210,6 +212,38 @@ df |> pivot_wider(names_from = k, values_from = v, names_prefix = "pre_")
 
 # 含多个变量的列名（用正则拆）
 df |> pivot_longer(-id, names_pattern = "(.*)_(\\d+)", names_to = c(".value", "num"))
+```
+
+```r
+# ⚠ 长 → 宽（pivot_wider）的两个坑，都源于"谁唯一识别一行"
+df = tibble(x = 1:6, y = c("A", "A", "B", "B", "C", "C"),
+            z = c(2.13, 3.65, 1.88, 2.30, 6.55, 4.21))
+
+# 坑 1：带着唯一 ID 列（x）→ 行数不压缩，只能填 NA（本想压成 2 行）
+df |> pivot_wider(names_from = y, values_from = z)        # 6 行；A/B/C 大多为 NA
+
+# 坑 2：去掉 x，但组内值不唯一识别 → 列表列（<dbl [2]>）+ 警告，形状也不对
+df[-1] |> pivot_wider(names_from = y, values_from = z)    # 1 行 3 列，每格是 list
+
+# 正解：先造"组内唯一识别列"，再变宽
+df[-1] |> mutate(n = row_number(), .by = y) |>
+  pivot_wider(names_from = y, values_from = z)            # 2 行 × 4 列（n, A, B, C）
+
+# 等价写法：保留原 ID 列，直接指定 id_cols（不必删 x）
+df |> mutate(n = row_number(), .by = y) |>
+  pivot_wider(names_from = y, values_from = z, id_cols = n)
+
+# 特例：不规则通讯录（同一"字段"重复出现）→ 用"姓名"出现位置造 ID
+contacts = tribble(
+  ~field, ~value,
+  "姓名", "张三",
+  "公司", "百度",
+  "姓名", "李四",
+  "公司", "腾讯",
+  "Email", "Lisi@163.com",
+  "姓名", "王五")
+contacts |> mutate(ID = cumsum(field == "姓名")) |>
+  pivot_wider(names_from = field, values_from = value)    # 3 行 × 4 列（ID/姓名/公司/Email）
 ```
 
 ### 6.8 嵌套批量（nest + map）
@@ -350,8 +384,8 @@ df |> mutate(rk = row_number(-销量), .by = 门店)   # 强制顺序（并列�
 - [ ] 多表连接前检查了连接关系？（1:1 / 1:N / N:1 / N:N）
 - [ ] 管道串联后结果符合预期形状？
 - [ ] 代码遵守 `=` / `|>` / `\(x)` / `.by` 规范？
-- [ ] 代码模板改动后运行 `scripts/verify_examples.R`（14 例）与 `scripts/verify_prompts.R`（3 题），全 PASS 才收工？
-- [ ] 文档计数改动后运行 `scripts/check_consistency.py`，62 项声明-实物对账全 PASS 才收工？（它同时管计数、文件引用、技能名一致性、跨技能契约与路由信号）
+- [ ] 代码模板改动后运行 `scripts/verify_examples.R`（15 例）与 `scripts/verify_prompts.R`（3 题），全 PASS 才收工？
+- [ ] 文档计数改动后运行 `scripts/check_consistency.py`，63 项声明-实物对账全 PASS 才收工？（它同时管计数、文件引用、技能名一致性、跨技能契约与路由信号）
 - [ ] 若改过技能名或引用，是否同步了 frontmatter `name`、README 标题与姊妹技能的全部引用？（改名属于"全仓一件事"，对账脚本会抓漏网）
 
 ## 11. 思维总结
@@ -365,4 +399,4 @@ df |> mutate(rk = row_number(-销量), .by = 门店)   # 强制顺序（并列�
 
 ## 12. 综合案例与范式详述
 
-8 范式的"何时用 / 思维轨迹 / 案例 / 注意"完整逻辑与多范式串联综合案例（范式1→3→4→6→2），见 [references/paradigms.md](references/paradigms.md)。可运行回归：`scripts/verify_examples.R`（14 例）、`scripts/verify_prompts.R`（3 题 7 检查）、`scripts/check_consistency.py`（62 项声明-实物对账）。人看的逐步案例（输入 → 定位 → 代码 → 真实输出）见 `examples/`；维护约定（对标观察清单、迭代纪律、下一轮入口）见 [MAINTAINING.md](MAINTAINING.md)。
+8 范式的"何时用 / 思维轨迹 / 案例 / 注意"完整逻辑与多范式串联综合案例（范式1→3→4→6→2），见 [references/paradigms.md](references/paradigms.md)。可运行回归：`scripts/verify_examples.R`（15 例）、`scripts/verify_prompts.R`（3 题 7 检查）、`scripts/check_consistency.py`（63 项声明-实物对账）。人看的逐步案例（输入 → 定位 → 代码 → 真实输出）见 `examples/`；维护约定（对标观察清单、迭代纪律、下一轮入口）见 [MAINTAINING.md](MAINTAINING.md)。
