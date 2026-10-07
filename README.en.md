@@ -18,6 +18,11 @@
 
 </div>
 
+> **Renamed**: this skill was originally `tidy-data` and became `data-wrangling` in 2026-09 — the skill id
+> *is* the directory name, and the rename aligns it with its sibling `data-cleaning`. **The old name no longer
+> triggers.** If you arrived from the old name, update the directory and any references to `data-wrangling`
+> (GitHub redirects the old repo URL automatically). Full rename checklist in [CHANGELOG.md](CHANGELOG.md).
+
 ---
 
 ## See how it locates

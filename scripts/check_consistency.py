@@ -188,12 +188,20 @@ for peer in peers:
 # 9. the legacy skill name must not survive in live docs ----------------------
 # (CHANGELOG is exempt: it is the one place the old name must stay, to explain
 # the rename. Everything a reader would follow today must use the new name.)
+# ONE narrow exception: a *deliberate* rename note, which names the old name on
+# purpose so readers arriving from it can find the skill. Such a line must carry
+# an explicit marker; a bare leftover still fails -- that is the bug this guards
+# (a missed rename silently forks the skill's identity across runtimes).
 LEGACY_NAME = "tidy-data"
+RENAME_MARKERS = ("原名", "旧名", "formerly", "originally", "renamed from")
 for d in ["SKILL.md", "references/paradigms.md", "README.md", "README.en.md",
           "scripts/verify_examples.R", "scripts/verify_prompts.R",
           "MAINTAINING.md", "examples/README.md"]:
-    check("{}: no legacy skill name".format(d),
-          LEGACY_NAME not in read_doc(d))
+    bad = [ln.strip() for ln in read_doc(d).splitlines()
+           if LEGACY_NAME in ln
+           and not any(m in ln or m in ln.lower() for m in RENAME_MARKERS)]
+    check("{}: no legacy skill name (rename notes excepted)".format(d),
+          not bad, "offending: " + " | ".join(x[:70] for x in bad))
 
 # 10. routing signals ---------------------------------------------------------
 # Offline we cannot measure "did the agent pick this skill", but we can measure
