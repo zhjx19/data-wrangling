@@ -8,7 +8,7 @@
 
 [![Agent Skills](https://img.shields.io/badge/Agent_Skills-data--wrangling-blueviolet)](SKILL.md)
 [![R](https://img.shields.io/badge/R-tidyverse-blue)](https://www.tidyverse.org/)
-[![regression](https://img.shields.io/badge/regression-15%2F15%20%C2%B7%207%2F7%20%C2%B7%2063%2F63%20PASS-brightgreen)](scripts/)
+[![regression](https://img.shields.io/badge/regression-15%2F15%20%C2%B7%207%2F7%20%C2%B7%2064%2F64%20PASS-brightgreen)](scripts/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![skills.sh](https://skills.sh/b/zhjx19/data-wrangling)](https://www.skills.sh/skills/zhjx19/data-wrangling)
 
@@ -137,7 +137,7 @@ git clone https://github.com/zhjx19/data-wrangling && cp -r data-wrangling ~/.cl
 ├── examples/                    3 个真实案例：输入 → 定位 → 代码 → 真实输出
 ├── scripts/verify_examples.R    15 例范式回归（任意 locale 可跑）
 ├── scripts/verify_prompts.R     3 题 prompt 实测回归
-├── scripts/check_consistency.py 63 项声明-实物对账（计数/引用/身份/契约/路由/外链）
+├── scripts/check_consistency.py 64 项声明-实物对账（计数/引用/身份/契约/路由/外链/资产）
 ├── VERIFICATION.md              验证记录：4 处翻车（含 2 处静默错）+ 路由评测
 ├── MAINTAINING.md               对标观察清单 + 迭代纪律 + 下一轮入口
 ├── CHANGELOG.md                 版本史
@@ -151,7 +151,7 @@ git clone https://github.com/zhjx19/data-wrangling && cp -r data-wrangling ~/.cl
 ```bash
 Rscript --vanilla scripts/verify_examples.R   # === Summary: 15/15 PASS ===
 Rscript --vanilla scripts/verify_prompts.R    # === Summary: 7 check(s), 0 failure(s) ===
-python scripts/check_consistency.py           # 63 项声明-实物对账，全部 PASS
+python scripts/check_consistency.py           # 64 项声明-实物对账，全部 PASS
 ```
 
 第三条不只数数：它同时验证**技能名一致性**（目录名 = frontmatter `name` = README 标题）、**跨技能契约**（`related-skills` 双向回指）、**路由信号**（姊妹技能是否无授权占用本技能的触发短语）和**文档自报的检查总数**。凡是计数、引用或改名类改动，它全绿才算改完——维护约定见 [MAINTAINING.md](MAINTAINING.md)。

@@ -100,6 +100,7 @@ python scripts/check_consistency.py            # 声明-实物对账（自报总
 
 - 不替**未授权**的技能做判断：`learning-method` 那次改动是拿到该作者明确授权后才做的。没有授权的重述，登记进 `KNOWN_OVERLAPS` 并写明理由，不擅自改别人的文档。
 - 不给 `examples/` 加第二套自动断言——会造出双份真相，与"单一事实源"冲突。
-- 不引入任何新依赖：四个脚本刻意保持零依赖、任意 locale 可跑。
+- 不引入任何新依赖：**三个**验证脚本（`verify_examples.R` / `verify_prompts.R` / `check_consistency.py`）
+  刻意保持零依赖、任意 locale 可跑；`assets/make_figures.py` 是唯一带依赖（matplotlib + Pillow）的脚本。
 - **不做 `.claude-plugin/marketplace.json`**（出生证检查会因此常驻一条 WARN）：本技能以 SKILL.md 形态分发，不进 plugin 市场；硬造一个 manifest 只会让"看起来能上架"变成误导。
 - **不提供 `.tape`（VHS 录制脚本）**（另一条常驻 WARN）：本机没有 vhs / ffmpeg，且首屏动图**不是录屏**，而是 `assets/make_figures.py` 从 `SKILL.md` §5 解析生成的示意图。可复现性由那个脚本负责（改文档重跑即可重画）；补一个跑不起来的 `.tape` 只会制造"看起来可复现"的假象。

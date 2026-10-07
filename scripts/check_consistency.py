@@ -16,6 +16,8 @@
 #   - external claims: identity-bearing URLs and the README regression badge
 #     (both rotted while nothing read them: a skills.sh path kept the old slug
 #     and 404'd, and the badge still said 28/28 after the checker grew to 57)
+#   - asset hygiene: every file in scripts/ must be claimed by a doc (a
+#     superseded check_consistency.R rode along for a full version unnoticed)
 #
 # Python on purpose: unicode-safe under any locale (the R sibling scripts hit
 # parser/locale landmines documented in their headers). Run from anywhere:
@@ -250,6 +252,18 @@ n_case_files = len([f for f in os.listdir(os.path.join(ROOT, "examples"))
 check("examples/ holds {} case files".format(N_EXAMPLES),
       n_case_files == N_EXAMPLES, "found {}".format(n_case_files))
 
+# 12. every script must be claimed by a doc -----------------------------------
+# A script nobody references is either dead weight or an unguarded asset. The
+# repo shipped a superseded `check_consistency.R` next to its Python rewrite for
+# a whole version, because nothing checked this. Cheap ratchet, real catch.
+_doc_text = "\n".join(read_doc(p) for p in
+                       ["SKILL.md", "README.md", "README.en.md", "MAINTAINING.md",
+                        "VERIFICATION.md", "CHANGELOG.md"])
+_unclaimed = sorted(f for f in os.listdir(os.path.join(ROOT, "scripts"))
+                    if not f.startswith(".") and f not in _doc_text)
+check("every scripts/ file is referenced by a doc", not _unclaimed,
+      "unclaimed: " + ", ".join(_unclaimed))
+
 # 13. written-in external claims ----------------------------------------------
 # A claim no script reads is a claim that rots. Two of them did, in the same
 # week: the distribution links (a skills.sh path kept the pre-rename slug and
@@ -284,7 +298,7 @@ for d in ["README.md", "README.en.md"]:
 check("external claims: regression badge counts match the scripts",
       not badge_bad, "; ".join(badge_bad))
 
-# 12. the declared check count itself ----------------------------------------
+# 14. the declared check count itself ----------------------------------------
 # SELF_COUNT_DOCS is defined in section 13 (the badge check needs it first).
 # The self-count checks below are themselves counted, so the number the docs
 # must declare is known in advance: total so far + one per doc examined.

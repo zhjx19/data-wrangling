@@ -8,7 +8,7 @@
 
 [![Agent Skills](https://img.shields.io/badge/Agent_Skills-data--wrangling-blueviolet)](SKILL.md)
 [![R](https://img.shields.io/badge/R-tidyverse-blue)](https://www.tidyverse.org/)
-[![regression](https://img.shields.io/badge/regression-15%2F15%20%C2%B7%207%2F7%20%C2%B7%2063%2F63%20PASS-brightgreen)](scripts/)
+[![regression](https://img.shields.io/badge/regression-15%2F15%20%C2%B7%207%2F7%20%C2%B7%2064%2F64%20PASS-brightgreen)](scripts/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![skills.sh](https://skills.sh/b/zhjx19/data-wrangling)](https://www.skills.sh/skills/zhjx19/data-wrangling)
 
@@ -118,7 +118,7 @@ table and goal)
 | Paradigm thinking | 8 paradigms: when to use / thought trajectory / case / caveats (references/paradigms.md) |
 | Copy-paste code | 17 shortest-form snippets (SKILL.md §6) |
 | Mind corrections | 12-row anti-pattern blacklist + 6 "break foreign habits" questions |
-| Quality assurance | Four-part self-check: 15 paradigm cases + 3 prompt tests + 63 doc-vs-reality checks + 3 worked cases |
+| Quality assurance | Four-part self-check: 15 paradigm cases + 3 prompt tests + 64 doc-vs-reality checks + 3 worked cases |
 
 ## How it differs
 
@@ -144,7 +144,7 @@ table and goal)
 ├── examples/                   3 worked cases: input → locating → code → real output
 ├── scripts/verify_examples.R   15 paradigm-case regressions (locale-proof)
 ├── scripts/verify_prompts.R    3 prompt-level regression tests
-├── scripts/check_consistency.py 63 doc-vs-reality consistency checks (counts / refs / identity / contracts / routing / external)
+├── scripts/check_consistency.py 64 doc-vs-reality consistency checks (counts / refs / identity / contracts / routing / external / assets)
 ├── VERIFICATION.md             Verification log: 4 breakages (2 silent) + routing eval
 ├── MAINTAINING.md              Peer watch list + iteration discipline + next-round entries
 ├── test-prompts.json           3 behavioral test prompts
@@ -158,7 +158,7 @@ table and goal)
 ```bash
 Rscript --vanilla scripts/verify_examples.R   # === Summary: 15/15 PASS ===
 Rscript --vanilla scripts/verify_prompts.R    # === Summary: 7 check(s), 0 failure(s) ===
-python scripts/check_consistency.py           # 63 doc-vs-reality checks, all PASS
+python scripts/check_consistency.py           # 64 doc-vs-reality checks, all PASS
 ```
 
 The third one does more than tally numbers: it verifies **skill-name identity** (directory name = frontmatter `name` = README title), **cross-skill contracts** (`related-skills` pointing both ways), **routing signals** (no sibling claiming our trigger phrases without delegating to us), and the **self-declared check count**. Any count, reference or rename edit is done only when it is green — see [MAINTAINING.md](MAINTAINING.md).
