@@ -34,9 +34,10 @@ df |> summarise(n = n(), mean_x = mean(x, na.rm = TRUE), .by = group)
 ```r
 df |> 
   filter(!if_any(1:2, is.na)) |> 
+  mutate(年 = year(销售时间)) |>   # .by 只收列名，不支持 year(销售时间) 这类表达式，先算出分组列
   summarise(总次数 = n_distinct(社保卡号, 销售时间),
             总金额 = sum(实收金额),
-            .by = year(销售时间)) |> 
+            .by = 年) |> 
   mutate(客单价 = 总金额 / 总次数)
 ```
 
@@ -91,7 +92,7 @@ df |> filter(mean(is.na(x)) < 0.6, .by = g)
 
 ```r
 df |> filter(if_all(c(x, y), ~ !is.na(.x)), .by = g)  # x、y 都非缺失才保留该行
-df |> filter(if_any(1:2, is.na), .by = g)             # 前两列任一缺失就删该行
+df |> filter(!if_any(1:2, is.na), .by = g)            # 前两列任一缺失就删该行（条件须取反）
 ```
 
 `if_all()` 要求所选列**全部**满足条件；`if_any()` 任一列满足即可——两者是**行级**多列筛选，区别于上面 `all()` 的**组级**筛选。
@@ -193,8 +194,8 @@ library(slider)
 df |> nest(.by = c(from, year)) |> 
   mutate(result = slide(data, \(x) {
       if(length(x) < 2) return(NA)
-      c(减少 = setdiff(x[[2]]$目的地, x[[1]]$目的地) |> length(),
-        增加 = setdiff(x[[1]]$目的地, x[[2]]$目的地) |> length())
+      c(减少 = setdiff(x[[1]]$目的地, x[[2]]$目的地) |> length(),
+        增加 = setdiff(x[[2]]$目的地, x[[1]]$目的地) |> length())
     }, .before = 1, .complete = TRUE))
 ```
 > 注意：`slide(..., .complete = TRUE)` 在窗口不完整时返回 NULL，需自行处理边界情形（如 `length(x) < 2` 返回 `NA`）；若希望始终返回向量，改用 `slide_dbl`。

@@ -265,7 +265,7 @@ df |> left_join(y, by = "id", suffix = c("_订单", "_客户"))
 ### 6.14 拆分列（编码 → 多列，tidyr ≥1.3 的 separate_wider_*）
 ```r
 df |> separate_wider_delim(编码, delim = "-", names = c("区号", "编号"))
-# 按位宽拆：separate_wider_position(编码, widths = c(2, 4))
+# 按位宽拆：separate_wider_position(编码, widths = c(区号 = 2, 编号 = 4))  # widths 必须（部分）命名
 # ⚠ 旧 separate() 已 superseded，新代码不再使用
 ```
 
